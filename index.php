@@ -38,8 +38,8 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td>Вход</td>
-                                <td>Регистрация</td>
+                                <td><span class="label label-danger">ВОЙТИ</span></td>
+                                <td><span class="label label-danger">РЕГИСТРАЦИЯ</span></td>
                             </tr>
                         </table>
                     </div>
@@ -76,10 +76,12 @@
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10 row">
                         <div class="col-xs-4">
-                            <button id="btnLogin" type="submit" class="btn btn-primary" >Войти</button>
+                            <a id="btnLogin" href="#" class="btn btn-primary btn-success"><span class="glyphicon glyphicon-ok"></span> Войти</a>
+                            <!--<button id="btnLogin" type="submit" class="btn btn-primary" >Войти</button>-->
                         </div>
                         <div class="col-xs-4">
-                            <button id="btnLoginCancel" type="submit" class="btn btn-default" >Отмена</button>
+                            <a id="btnLoginCancel" href="#" class="btn btn-primary btn-warning"><span class="glyphicon glyphicon-remove"></span> Отмена</a>
+                            <!--<button id="btnLoginCancel" type="submit" class="btn btn-default" >Отмена</button>-->
                         </div>
                     </div>
                 </div>
@@ -91,7 +93,7 @@
 
 <div class="md-modal" id="modal-reg-user">
     <div class="md-content">
-        <h3>Вход<br></h3><div class="register_err">Заполните все поля!</div>
+        <h3>Регистрация<br></h3><div class="register_err">Заполните все поля!</div>
         <div>
             <form class="form-horizontal" role="form" >
                 <div class="form-group">
@@ -116,10 +118,12 @@
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10 row">
                         <div class="col-xs-4">
-                            <button id="btnRegister" type="submit" class="btn btn-primary" >Регистрация</button>
+                            <!--<button id="btnRegister" type="submit" class="btn btn-primary">Регистрация</button>-->
+                            <a id="btnRegister" href="#" class="btn btn-success"><span class="glyphicon glyphicon-saved"></span> Регистрация</a>
                         </div>
                         <div class="col-xs-4">
-                            <button id="btnRegisterCancel" type="submit" class="btn btn-default" >Отмена</button>
+                            <!--<button id="btnRegisterCancel" type="submit" class="btn btn-default" >Отмена</button>-->
+                            <a id="btnRegisterCancel" href="#" class="btn btn-warning"><span class="glyphicon glyphicon-user"></span> Отмена</a>
                         </div>
                     </div>
                 </div>
@@ -128,9 +132,6 @@
     </div>
 </div>
 
-<!--
-
--->
 
 
 
@@ -177,8 +178,8 @@
                     not_equal =false;
                     if( userVM.crenditles[i].password == sha1( $("#my_password").val()) ){
                         var date = new Date( new Date().getTime() + 120*60*1000 );//120 min
-                        document.cookie ='userName' + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-                        document.cookie="userName="+$("#my_login").val()+", fio="+userVM.fio+", role="+userVM.role+"; path=/; expires="+date.toUTCString();
+                        //document.cookie ='userName' + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+                        document.cookie="userName="+userVM.crenditles[i].login+", fio="+userVM.crenditles[i].fio+", role="+userVM.crenditles[i].role+"; path=/; expires="+date.toUTCString();
 
                         setTimeout(function(){
                             window.location.replace('main.php#home');
