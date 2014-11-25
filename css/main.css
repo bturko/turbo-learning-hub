@@ -274,7 +274,7 @@ a {
     td a:hover{
         cursor: pointer;
     }
-    .new_test_err, .log_in_err, .register_err, .new_que_err, .new_note_err{
+    .new_test_err, .log_in_err, .register_err, .new_que_err, .new_note_err, .new_project_err{
         text-align: center; 
         padding: 0px !important; 
         display: none;
@@ -321,4 +321,13 @@ a {
         padding: 10px;
         color: white;
         font-size: 22pt;
+    }
+    .project{
+        text-decoration: underline;
+    }
+    .project:before{
+         content: '';
+     }
+    .project:after{
+        content: '';
     }

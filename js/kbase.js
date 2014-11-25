@@ -14,6 +14,7 @@ function KBase() {
                 $("#new_note").click(function(){
                      spa.show_dialog("modal-new-note");
                 });
+
             })
             .fail(function(response){
                 $("#"+elm_id).html("Error!");
@@ -125,13 +126,3 @@ function KBase() {
 
 var kbaseVM = new KBase;
 
-/*
-function unescapeHTML(p_string)
-{
-    if ((typeof p_string === "string") && (new RegExp(/&amp;|&lt;|&gt;|&quot;|&#39;/).test(p_string)))
-    {
-        return p_string.replace(/&amp;/g, "&").replace(/&lt/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&#39;/g, "'");
-    }
-
-    return p_string;
-}*/
