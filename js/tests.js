@@ -58,10 +58,28 @@ function Tests() {
                 //hideNewTaskDlg();
                 self.hide_dialog("modal-new-test");
 
-                //history.pushState('', '', "/clh/#tests");
-
             });
     };
+    self.get_test_details = function(test_id){
+        $.ajax({
+            url: "ajax.php?get_test_details",
+            method: "get",
+            data: {
+                testId: test_id,
+                user_role: userVM.role
+            }
+        })
+            .success(function(response){
+                var json = JSON.parse(response);
+                $("#editTaskTitle").val(json.title)
+                $("#editTaskDescription").val(json.description);
+            })
+            .error(function(response){
+                logVM.informer("Ошибка!");
+            })
+            .complete(function(){
+            });
+    }
     return self;
 }
 

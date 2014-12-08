@@ -11,12 +11,12 @@ function Logs() {
         if(self.logging == true) console.info(messagee);
     }
     self.informer = function(message, error1){
-        error1 == true ? $("#informer").css({"border-color": "red"}) : $("#informer").css({"border-color": "green"});
+        error1 == true ? $("#informer").css({"background-color": "red"}) : $("#informer").css({"background-color": "green"});
         $("#informer").html(message);
         $("#informer").fadeIn(500);
         setTimeout(function(){
             $("#informer").fadeOut(500);
-        }, 4000)
+        }, 4500)
     }
     return self;
 }

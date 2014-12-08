@@ -2,34 +2,41 @@ function KBase() {
     var self = {};
     self.edit_nid = 0;
     self.remove_id = 0;
-    self.get_kbase = function(elm_id){
+    self.creating_note_proj_id = 0;
+    self.cur_viewed_note = 0;
+    self.getNotesList = function(elm_id){
         $.ajax({
-            url: "ajax.php?get_kbase",
+            url: "ajax.php?getNotesList",
             method: "post",
             data: {user_role: userVM.role}
         })
             .success(function(response){
                 $("#"+elm_id).html(response);
-
-                $("#new_note").click(function(){
-                     spa.show_dialog("modal-new-note");
-                });
-
             })
             .fail(function(response){
                 $("#"+elm_id).html("Error!");
             });
     }
-    self.add_note = function(title, content, elm_id){
-        //alert($("#noteContent").val())
-        $.post('ajax.php?add_note', {title: title, user_role: userVM.role, content: $("#noteContent").val()}, function(result){
-            $("#"+elm_id).html(result);
-            var n = result.search("Ошибка");
-            console.log(n)
+    self.createNote = function(title, content, elm_id){
+        $.post('ajax.php?add_note', {
+                title: title,
+                user_role: userVM.role,
+                content: $("#noteContent").val(),
+                project_id: self.creating_note_proj_id
+            }, function(result){
+                //$("#"+elm_id).html(result);
+                /*setTimeout(function(){
+                    location.reload();
+                }, 100) ;*/
+               projectsVM.getProjectsList("projects_blk");
+
+                var n = result.search("Ошибка");
+                //console.log(n)
             if(n < 0){
                 logVM.informer("Запись успешно добавлена!")
             }
-            self.get_kbase(userVM.role);
+            //self.get_kbase(userVM.role);
+
         });
         /*$.ajax({
             url: "ajax.php?add_note",
@@ -43,48 +50,53 @@ function KBase() {
                 $("#"+elm_id).html("Error!");
             });*/
     }
-    self.get_note = function(note_id){
+    self.getNoteDetails = function(note_id, if_not_edit){
         self.edit_nid = note_id;
+        //alert(if_not_edit)
         $.ajax({
-            url: "ajax.php?get_note",
+            url: "ajax.php?getNoteDetails",
             method: "post",
-            data: {note_id: note_id, user_role: userVM.role}
+            data: {
+                note_id: note_id,
+                user_role: userVM.role
+            }
         })
             .success(function(resp1){
-                //var json = JSON.parse(resp1);
+                //alert(resp1)
                 var n = resp1.search("::::");
                 part1 = resp1.substring(0, n);
                 part2 = resp1.substring(n+4);
 
-                //console.log( unescapeHTML(part2)  );
-
-                $("#editNoteTitle").val(part1);
-                //$("#editNoteContent").val(json.content);
-                editNC.set_text(part2);
+                //alert(if_not_edit)
+                if(if_not_edit==false){
+                    $("#editNoteTitle").val(part1);
+                    editNC.set_text(part2);
+                    spa.show_dialog("modal-edit-note");
+                    //alert(part1)
+                }
+                else{
+                    $("#kbase_blk").html("<div style='background: #efefef;padding: 10px;'><h2><span class='glyphicon glyphicon-paperclip' aria-hidden='true'></span> "+part1+"</h2><br>"+part2+"</div>");
+                }
             })
             .fail(function(response){
                 $("#editNoteTitle").val("Ошибка!");
             });
-        spa.show_dialog("modal-edit-note");
+
     }
     self.edit_note = function(title, content, elm_id){
         var txt = $("#editNoteContent").val();
-        //alert(txt)
         if(txt=="") txt = editNC.get_html();
         console.log(txt)
-        //alert(editNC.get_text())
-        //alert(editNC.get_html())
         $.post('ajax.php?update_note', {note_id: self.edit_nid, title: title, user_role: userVM.role, content: txt}, function(result){
             $("#"+elm_id).html(result);
             var n = result.search("требуемый");
-            //console.log(n)
             var m = result.search("Ошибка!");
             //.log(m)
             if(n < 0 && m < 0){
                 logVM.informer("Запись успешно изменена!")
-                setTimeout(function(){
+                /*setTimeout(function(){
                     location.reload();
-                }, 500)
+                }, 500)*/
             }
             self.get_kbase(userVM.role);
         });
