@@ -93,12 +93,13 @@ function KBase() {
             var m = result.search("Ошибка!");
             //.log(m)
             if(n < 0 && m < 0){
-                logVM.informer("Запись успешно изменена!")
+                logVM.informer("Запись успешно изменена!");
                 /*setTimeout(function(){
                     location.reload();
                 }, 500)*/
             }
-            self.get_kbase(userVM.role);
+            //self.get_kbase(userVM.role);
+            projectsVM.getProjectsList("projects_blk");
         });
         /*$.ajax({
             url: "ajax.php?update_note",

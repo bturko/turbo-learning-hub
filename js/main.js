@@ -312,14 +312,14 @@
         $("#edit_note_btn").click(function(){
             kbaseVM.edit_note( $("#editNoteTitle").val(), $("#editNoteContent").val(), "kbase_blk" )
             spa.hide_dialog("modal-edit-note");
-            spa.change_uri("kbase")
+            spa.change_uri("querstions/"+kbaseVM.cur_viewed_note)
         });
 
 
         $("#edit_note_cancel").click(function(){
             //hideNewNoteDlg();
             spa.hide_dialog("modal-edit-note");
-            spa.change_uri("kbase")
+            spa.change_uri("querstions/"+kbaseVM.cur_viewed_note)
         });
 
 
