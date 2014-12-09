@@ -68,7 +68,7 @@
 
 
 
-
+        $("ul>li:last-child").hide();
 
 
        /* setTimeout(function(){*/
@@ -178,7 +178,8 @@
                     editTestId: spa.cur_edit_test_id,
                     editTestTitle: $("#editTaskTitle").val(),
                     editTestDescription: $("#editTaskDescription").val(),
-                    user_role: userVM.role
+                    user_role: userVM.role,
+                    login: userVM.login
                 }
             })
                 .success(function(response){
@@ -284,12 +285,14 @@
 
 
         $("#new_note_btn").click(function(){
-            if( $("#noteTitle").val()=="" || $("#noteContent").val()=="" ){
+            if( $("#noteTitle").val()==""/* || $("#noteContent").val()==""*/ ){
                 $(".new_note_err").show();
             }
             else{
-                var req = kbaseVM.add_note($("#noteTitle").val(), $("#noteContent").val(), "kbase_blk");
-               
+                var req = kbaseVM.createNote($("#noteTitle").val(), $("#noteContent").val(), "kbase_blk");
+                /*setTimeout(function(){
+                    projectsVM.getProjectsList("projects_blk");
+                }, 700);*/
                 spa.hide_dialog("modal-new-note");
                 $("#noteTitle").val("");
                 newNC.set_text("");
@@ -413,34 +416,134 @@
             spa.change_uri("kbase");
         });
 
+        $("#user_remove_btn").click(function(){
+            var req = userVM.remove_user(userVM.removing_user_id);
+            req.success(function(response){
+                var json = JSON.parse(response);
+                if(json.status == "removed"){
+                    logVM.informer("Пользователь был удален!")
+                    spa.hide_dialog("modal-remove-user");
+
+                }
+                else{
+                    logVM.informer("Возникла ошибка!", true)
+                }
+            });
+            //spa.hide_dialog("modal-remove-note");
+            spa.change_uri("users");
+        });
+
+        $("#user_remove_cancel").click(function(){
+            spa.hide_dialog("modal-remove-user");
+            spa.change_uri("users");
+        });
+
+
+
+        $("#new_project_btn").click(function(){
+            if( $("#projectTitle").val()=="" ){
+                $(".new_project_err").show();
+            }
+            else{
+                var req = projectsVM.createProject($("#projectTitle").val(), $("#projectDescription").val(), "projects_blk");
+
+                spa.hide_dialog("modal-new-project");
+                $("#projectTitle").val("");
+                $("#projectDescription").val("");
+                //newNC.set_text("");
+                spa.change_uri("kbase")
+            }
+
+        });
+
+        $("#new_project_cancel").click(function(){
+            spa.hide_dialog("modal-new-project");
+            $("#projectTitle").val("");
+            $("#projectDescription").val("");
+            //newNC.set_text("");
+            spa.change_uri("kbase")
+        });
+
+
+        $("#project_remove_btn").click(function(){
+            var req = projectsVM.removeProject(projectsVM.remove_project_id);
+            req.success(function(response){
+                var json = JSON.parse(response);
+                if(json.status == "removed"){
+                    logVM.informer("Проект был удален!")
+                    spa.hide_dialog("modal-remove-project");
+                }
+                else{
+                    logVM.informer("Возникла ошибка!", true)
+                }
+            });
+            spa.change_uri("kbase");
+        });
+
+        $("#project_remove_cancel").click(function(){
+            spa.hide_dialog("modal-remove-project");
+            spa.change_uri("kbase");
+        });
+
+        $("#edit_project_btn").click(function(){
+            projectsVM.editProject( $("#editProjectTitle").val(), $("#editProjectDescription").val(), "projects_blk" )
+            spa.hide_dialog("modal-edit-project");
+            spa.change_uri("kbase")
+        });
+
+
+        $("#edit_project_cancel").click(function(){
+            spa.hide_dialog("modal-edit-project");
+            spa.change_uri("kbase")
+        });
 
     });
 
 
-function remove_test(test_id){
-    spa.cur_remove_test_id = test_id;
-    showRemoveTestDlg();
-}
+    function remove_test(test_id){
+        spa.cur_remove_test_id = test_id;
+        showRemoveTestDlg();
+    }
 
+    function remove_user(user_id){
+        userVM.removing_user_id = user_id;
+        spa.show_dialog("modal-remove-user");
+    }
 
-function showRemoveTestDlg(){  
-    $("#modal-remove-test").css({
-        "-webkit-perspective": "1300px",
-        "-webkit-animation-duration": "1s",
-        "animation-duration": "2s",
-        "visibility": "visible",
-        "opacity": "1"                
-       });
-}
-function hideRemoveTestDlg(){
-    $("#modal-remove-test").css({
-        "-webkit-perspective": "1300px",
-        "-webkit-animation-duration": "1s",
-        "animation-duration": "2s",
-        "visibility": "hidden",
-        "opacity": "0"                       
-       });
-}
+    function remove_project(project_id){
+        projectsVM.remove_project_id = project_id;
+        spa.show_dialog("modal-remove-project");
+    }
+
+    function edit_project(project_id){
+        projectsVM.getProjectDetails(project_id);
+        spa.show_dialog("modal-edit-project");
+
+    }
+
+    function create_note(project_id){
+        kbaseVM.creating_note_proj_id = project_id;
+        spa.show_dialog("modal-new-note");
+    }
+
+    function showRemoveTestDlg(){
+        $("#modal-remove-test").css({
+            "-webkit-perspective": "1300px",
+            "-webkit-animation-duration": "1s",
+            "animation-duration": "2s",
+            "visibility": "visible",
+            "opacity": "1"
+           });
+    }
+    function hideRemoveTestDlg(){
+        $("#modal-remove-test").css({
+            "-webkit-perspective": "1300px",
+            "-webkit-animation-duration": "1s",
+            "animation-duration": "2s",
+            "visibility": "hidden",
+            "opacity": "0"
+           });
+    }
 
 
 
@@ -505,30 +608,8 @@ function watch_test(test_id){
 
 function edit_test(test_id){
     spa.cur_edit_test_id = test_id;
-    showEditTestDlg();
-    $.ajax({
-        url: "ajax.php?get_test_details",
-        method: "get",
-        data: {
-            testId: spa.cur_edit_test_id,
-            user_role: userVM.role
-        }
-    })
-        .success(function(response){
-            var json = JSON.parse(response);//response.parseJSON();
-            $("#editTaskTitle").val(json.title)
-            $("#editTaskDescription").val(json.description)
-
-        })
-        .error(function(response){
-            logVM.informer("Ошибка!");
-        })
-        .complete(function(){
-            //$(".new_test_err").css({"display": "none"});
-
-            //spa.change_uri("tests")
-
-        });
+    spa.show_dialog("modal-edit-test");
+    testVM.get_test_details( test_id );
 }
 
 function get_questions_editing(test_id){
@@ -566,7 +647,7 @@ function get_questions_editing(test_id){
 }
 
 
-function showEditTestDlg(){
+/*function showEditTestDlg(){
     $("#modal-edit-test").css({
         "-webkit-perspective": "1300px",
         "-webkit-animation-duration": "1s",
@@ -583,7 +664,7 @@ function hideEditTestDlg(){
         "visibility": "hidden",
         "opacity": "0"
     });
-}
+}*/
 
 
 function watch_questions(test_id){
@@ -640,14 +721,14 @@ function edit_que(que_id){
     spa.show_dialog("modal-edit-que")
 }
 
-function remove_result(result_id){
-    resultsVM.remove_result_id = result_id;
-    spa.show_dialog("modal-remove-result")
-}
-function remove_note(note_id){
-    kbaseVM.remove_id = note_id;
-    spa.show_dialog("modal-remove-note")
-}
+    function remove_result(result_id){
+        resultsVM.remove_result_id = result_id;
+        spa.show_dialog("modal-remove-result")
+    }
+    function remove_note(note_id){
+        kbaseVM.remove_id = note_id;
+        spa.show_dialog("modal-remove-note")
+    }
 
 
     /**
@@ -799,8 +880,7 @@ function remove_note(note_id){
         }
     }
     function edit_cb_toggle(){
-        //alert(3)
-        if( $("#edit_cb_toggle_blk").css("display")=="block" ){
+         if( $("#edit_cb_toggle_blk").css("display")=="block" ){
             $("#edit_cb_toggle_blk").slideUp(500);
             $("#editvar1_label").text("Ответ");
         }
@@ -811,3 +891,6 @@ function remove_note(note_id){
     }
 
 
+function redir_url(){
+    window.location.replace("main.php#notes/1/15");
+}

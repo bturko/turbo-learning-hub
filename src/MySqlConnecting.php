@@ -2,6 +2,20 @@
 
 
 class MySqlConnecting {
+
+    public function connectDB(){
+        try {
+            $dbh = new PDO('mysql:host=localhost;dbname=test', $user, $pass);
+            foreach($dbh->query('SELECT * from FOO') as $row) {
+                print_r($row);
+            }
+            $dbh = null;
+        } catch (PDOException $e) {
+            print "Error!: " . $e->getMessage() . "<br/>";
+            die();
+        }
+    }
+
     /**
      * @return resource
      */
@@ -11,7 +25,7 @@ class MySqlConnecting {
             $link = mysql_connect('localhost', 'root', '');
         }
         else{
-            $link = mysql_connect('localhost', 'clhusr', 'kzkzkzkzkz-Zcjkfcevf');
+            $link = mysql_connect('localhost', '', '');
         }
 
         if (!$link) {

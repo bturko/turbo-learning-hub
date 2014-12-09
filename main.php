@@ -6,13 +6,12 @@
     <meta name="viewport" content="width=device-width, minimum-scale=1.0" />
     <link rel="shortcut icon" href="src/favicon.ico" type="image/x-icon" />
 
-    <link rel="stylesheet" href="css/bootstrap.css">
-    <link href="css/bootstrap.icon-large.min.css" rel="stylesheet">
-    <link href="css/main.css" type="text/css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+    <link rel="stylesheet" type="text/css"  href="css/bootstrap.icon-large.min.css" >
+    <link rel="stylesheet" type="text/css" href="css/main.css">
     <link rel="stylesheet" type="text/css" href="css/component.css" />
     <link rel="stylesheet" type="text/css" href="css/bootstrap-select.css" />
     <link rel="stylesheet" type="text/css" href="css/jquery.jqplot.css" />
-
 
     <script type='text/javascript' src='vendors/jquery17.js'></script>
     <script type='text/javascript' src='vendors/sammy.js'></script>
@@ -22,6 +21,7 @@
     <script type='text/javascript' src='js/log.js'></script>
     <script type='text/javascript' src='js/user.js'></script>
     <script type='text/javascript' src='js/results.js'></script>
+    <script type='text/javascript' src='js/projects.js'></script>
     <script type='text/javascript' src='js/kbase.js'></script>
     <script type='text/javascript' src='js/tests.js'></script>
     <script type='text/javascript' src='js/questions.js'></script>
@@ -29,8 +29,9 @@
     <script type='text/javascript' src='js/main.js'></script>
     <script type='text/javascript' src='js/bootstrap-select.js'></script>
     <script type="text/javascript" src="vendors/jquery.jqplot.min.js"></script>
+    <script type="text/javascript" src="vendors/jqplot.pieRenderer.js"></script>
     <script type="text/javascript" src="vendors/jqplot.donutRenderer.js"></script>
-
+    <script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
 </head>
 <body>
     <div id="informer"></div>
@@ -39,7 +40,7 @@
                 <div class="col-lg-12">
                     <div class="row" >
                         <ul class="nav nav-pills" data-bind="foreach:views">
-                            <li data-bind="css: {active: $root.currentView() == name}"> 
+                            <li data-bind="css: {active: $root.currentView() == name}" style="display:block">
                                 <a data-bind="text: title, attr:{href:'#' + name}"></a>
                             </li>
                         </ul>
@@ -96,8 +97,11 @@
                             </section>
                              <div id='test_messages'></div>
                             
-                            <button id="btnNewtask" class="role1">Новый тест</button>
 
+                                <a href="#home" class="btn btn-info"><span class="glyphicon glyphicon-chevron-left"></span> Назад</a>
+                                <a id="btnNewtask" href="#" class="btn btn-danger"><span class="glyphicon glyphicon-file role1"></span> Новый тест</a>
+
+                                <!--<button type="button" class="btn btn-primary btn-xs"><a href="#home">&laquo; Назад</a></button>-->
                             <div id='tests'></div>
                             </div>
                         </script>
@@ -114,15 +118,12 @@
                             <button class="md-trigger" data-modal="modal-9">Новый тест</button>
                             <!--<h3>Example heading <span class="label label-default">New</span></h3>-->
 
-                           <!-- <div id="test_create_blk">
-                              
-                            </div>  /test_create_blk -->
                             <div id='tests'></div>
                             </div>
                         </script>
                         <!-- /TEST_VIEW -->
                       
-                        <!-- KBASE -->
+                        <!-- KBASE PROJECTS -->
                         <script type="text/html" id="kbase">
                             <div>
                             <section id="set-8">
@@ -130,13 +131,31 @@
                             </section>
                              <div id='test_messages'></div>
 
-                            <button id="new_note" class="md-trigger role1" data-modal="modal-9">Новая запись</button>
-                            <!--<button id="new_note" type="button" class="btn btn-primary" >Новый вопрос</button>-->
+                                <a href="#home" class="btn btn-info"><span class="glyphicon glyphicon-chevron-left"></span> Назад</a>
+                                <a id="new_project" href="#" class="btn btn-danger"><span class="glyphicon glyphicon-paperclip role1"></span> Добавить проект</a>
 
-                            <div id="kbase_blk"></div>
+                            <div id="projects_blk"></div>
+
                             </div>
                         </script>
-                        <!-- /KBASE -->
+                        <!-- /KBASE PROJECTS -->
+
+                        <!-- KBASE NOTES
+                        <script type="text/html" id="notes">
+                            <div>
+                                <section id="set-8">
+                                    <div title="База знаний" class="hi-icon hi-icon-2"> </div><span style="font-size: 32pt; color: white">Заметка</span>
+                                </section>
+                                <div id='test_messages'></div>
+
+                                <a href="main.php#kbase" class="btn btn-info"><span class="glyphicon glyphicon-chevron-left"></span> Назад</a>
+                                <a id="edit_note" href="#" class="btn btn-danger"><span class="glyphicon glyphicon-pencil role1"></span> Редактировать заметку</a>
+                                <a id="edit_note" href="#" class="btn btn-danger"><span class="glyphicon glyphicon-remove role1"></span> Удалить заметку</a>
+
+                                <div id="kbase_blk"></div>
+                            </div>
+                        </script>
+                        /KBASE NOTES -->
 
                         <!-- USERS -->
                         <script type="text/html" id="users">
@@ -191,11 +210,29 @@
                             </div>
                         </script>
 
+                        <script type="text/html" id="pages">
+                            <div>
+                                <h2>Заметка</h2>
+                            </div>
+
+                            <a href="main.php#kbase" class="btn btn-info"><span class="glyphicon glyphicon-chevron-left"></span> Назад</a>
+                            <a onclick='spa.show_dialog("modal-edit-note"); kbaseVM.getNoteDetails(kbaseVM.cur_viewed_note, false);' class="btn btn-danger"><span class="glyphicon glyphicon-pencil role1"></span> Редактировать заметку</a>
+                            <a id="edit_note" href="#" class="btn btn-danger"><span class="glyphicon glyphicon-remove role1"></span> Удалить заметку</a>
+
+                            <div id="kbase_blk"></div>
+                        </script>
+
 
                         <script type="text/html" id="questions">
                             <div>
                                 <h2>Вопросы</h2>
-                                <button id="sh_newquestion" style="margin: 3px;">Новый вопрос</button><br>
+
+                                <a href="#tests1" class="btn btn-info"><span class="glyphicon glyphicon-chevron-left"></span> Назад</a>
+                                <a href="#" class="btn btn-primary" onclick="questionVM.get_questions(questionVM.cur_edit_que);"><span class="glyphicon glyphicon-refresh"></span> Обновить</a>
+                                <a id="sh_newquestion" href="#" class="btn btn-danger"><span class="glyphicon glyphicon-question-sign role1"></span> Добавить вопрос</a>
+
+                                <!--<button id="sh_newquestion" style="margin: 3px;">Новый вопрос</button>
+                                <button type="button" class="btn btn-primary btn-xs"><a href="#tests1">&laquo; Назад</a></button><br>-->
                                 <div id="q_blk_content">
 
                                 </div>
@@ -205,10 +242,6 @@
 
 
 
-                        <div id="test_section">
-                            
-
-                        </div> <!-- test_section -->
 
                         <div id="mainbody" >
                             <!--<div id="upload" ><span id="sel_file">:)<span></div><span id="status" ></span>
@@ -240,14 +273,14 @@
 
             </div>
             <div id="quiz_results">
-                Результат: <span id="my_results"></span>;
-                <button id="watch_que_close" type="submit" class="btn btn-primary" >Закрыть</button>
+                Результат: <span id="my_results"></span>
+                <a id="watch_que_close" href="#" class="btn btn-primary"><span class="glyphicon glyphicon-flag"></span> Закрыть</a>
             </div>
-            <div class="form-group"><!--class="col-sm-offset-2 col-sm-10"-->
+            <div class="form-group">
                 <div  style="text-align: center;">
-                    <button id="watch_que_btn" type="submit" class="btn btn-primary" >Начать</button>
-                    <button id="next" type="submit" class="btn btn-primary" onclick="questionVM.next();">Ответить</button>
-                    <button id="watch_que_cancel" type="submit" class="btn btn-default" href = "javascript:void(0)" onclick = "spa.hide_popup('watch_test_popup');">Отмена</button>
+                    <a id="watch_que_btn" href="#" class="btn btn-success"><span class="glyphicon glyphicon-play"></span> Начать</a>
+                    <a id="next" href="#" class="btn btn-warning" onclick="questionVM.next();"><span class="glyphicon glyphicon-check"></span> Ответить</a>
+                    <a id="watch_que_cancel" href="#" class="btn btn-danger" href = "javascript:void(0)" onclick = "spa.hide_popup('watch_test_popup');"><span class="glyphicon glyphicon-remove"></span> Отмена</a>
                 </div>
             </div>
         </form>
@@ -277,10 +310,11 @@
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10 row">
                                 <div class="col-xs-6">
-                                    <button id="test_create_btn" type="submit" class="btn btn-primary" >Создать</button>
-                                </div>
+                                    <!--<button id="test_create_btn" type="submit" class="btn btn-primary" >Создать</button>-->
+                                    <a id="test_create_btn" href="#" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span> Создать</a>                                </div>
                                 <div class="col-xs-6">
-                                    <button id="test_create_cancel" type="submit" class="btn btn-default" >Отмена</button>
+                                    <!--<button id="test_create_cancel" type="submit" class="btn btn-default" >Отмена</button>-->
+                                    <a id="test_create_cancel" href="#" class="btn btn-warning"><span class="glyphicon glyphicon-remove"></span> Отмена</a>
                                 </div>
                             </div>
                         </div>
@@ -291,7 +325,7 @@
 
         <div class="md-modal" id="modal-remove-test">
             <div class="md-content">
-                <h3>Удаление теста<br></h3><div class="new_test_err">Введите название!</div>
+                <h3>Удаление теста<br></h3><!--<div class="new_test_err">Введите название!</div>-->
                 <div>
                     <form class="form-horizontal"  >
                         <div class="form-group" >
@@ -300,10 +334,12 @@
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10 row">
                                 <div class="col-xs-4">
-                                    <button id="test_remove_btn" type="submit" class="btn btn-primary" >Да</button>
+                                    <!--<button id="test_remove_btn" type="submit" class="btn btn-primary" >Да</button>-->
+                                    <a id="test_remove_btn" href="#" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span> Да</a>
                                 </div>
                                 <div class="col-xs-4">
-                                    <button id="test_remove_cancel" type="submit" class="btn btn-default" >Нет</button>
+                                    <!--<button id="test_remove_cancel" type="submit" class="btn btn-default" >Нет</button>-->
+                                    <a id="test_remove_cancel" href="#" class="btn btn-warning"><span class="glyphicon glyphicon-remove"></span> Нет</a>
                                 </div>
                             </div>
                         </div>
@@ -316,7 +352,7 @@
             <div class="md-content">
                 <h3>Редактирование теста<br></h3>
                 <div>
-                    <form class="form-horizontal"  >
+                    <form class="form-horizontal" >
                         <div class="form-group">
                             <label for="inputEmail3" class="col-sm-2 control-label">Название</label>
                             <div class="col-sm-10">
@@ -403,10 +439,12 @@
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10 row">
                                 <div class="col-xs-4">
-                                    <button id="que_new_btn" type="submit" class="btn btn-primary" >Сохранить</button>
+                                    <!--<button id="que_new_btn" type="submit" class="btn btn-primary" >Сохранить</button>-->
+                                    <a id="que_new_btn" href="#" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span> Сохранить</a>
                                 </div>
                                 <div class="col-xs-4">
-                                    <button id="que_new_cancel" type="submit" class="btn btn-default" >Отмена</button>
+                                    <!--<button id="que_new_cancel" type="submit" class="btn btn-default" >Отмена</button>-->
+                                    <a id="que_new_cancel" href="#" class="btn btn-warning"><span class="glyphicon glyphicon-remove"></span> Отмена</a>
                                 </div>
                             </div>
                         </div>
@@ -475,10 +513,12 @@
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10 row">
                                 <div class="col-xs-4">
-                                    <button id="que_edit_btn" type="submit" class="btn btn-primary" >Изменить</button>
+                                    <!--<button id="que_edit_btn" type="submit" class="btn btn-primary" >Изменить</button>-->
+                                    <a id="que_edit_btn" href="#" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span> Изменить</a>
                                 </div>
                                 <div class="col-xs-4">
-                                    <button id="que_edit_cancel" type="submit" class="btn btn-default" >Отмена</button>
+                                    <!--<button id="que_edit_cancel" type="submit" class="btn btn-default" >Отмена</button>-->
+                                    <a id="que_edit_cancel" href="#" class="btn btn-warning"><span class="glyphicon glyphicon-remove"></span> Отмена</a>
                                 </div>
                             </div>
                         </div>
@@ -500,10 +540,12 @@
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10 row">
                                 <div class="col-xs-4">
-                                    <button id="que_remove_btn" type="submit" class="btn btn-primary" >Да</button>
+                                    <!--<button id="que_remove_btn" type="submit" class="btn btn-primary" >Да</button>-->
+                                    <a id="que_remove_btn" href="#" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span> Да</a>
                                 </div>
                                 <div class="col-xs-4">
-                                    <button id="que_remove_cancel" type="submit" class="btn btn-default" >Нет</button>
+                                    <!--<button id="que_remove_cancel" type="submit" class="btn btn-default" >Нет</button>-->
+                                    <a id="que_remove_cancel" href="#" class="btn btn-warning"><span class="glyphicon glyphicon-remove"></span> Нет</a>
                                 </div>
                             </div>
                         </div>
@@ -518,6 +560,13 @@
     <script language="Javascript" src="vendors/htmlbox.syntax.js" type="text/javascript"></script>
     <script language="Javascript" src="vendors/xhtml.js" type="text/javascript"></script>
     <script language="Javascript" src="vendors/htmlbox.full.js" type="text/javascript"></script>
+    <script>
+        /*$(function() {
+            $( "#noteContent" ).resizable({
+                handles: "se"
+            });
+        });*/
+    </script>
    
         <div class="md-modal" id="modal-new-note">
             <div class="md-content" style="width: 795px;">
@@ -540,10 +589,10 @@
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10 row">
                                 <div class="col-xs-4">
-                                    <button id="new_note_btn" type="submit" class="btn btn-primary" >Сохранить</button>
+                                    <a id="new_note_btn" href="#" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span> Сохранить</a>
                                 </div>
                                 <div class="col-xs-4">
-                                    <button id="new_note_cancel" type="submit" class="btn btn-default" >Отмена</button>
+                                    <a id="new_note_cancel" href="#" class="btn btn-warning"><span class="glyphicon glyphicon-remove"></span> Отмена</a>
                                 </div>
                             </div>
                         </div>
@@ -574,10 +623,38 @@
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10 row">
                             <div class="col-xs-4">
-                                <button id="edit_note_btn" type="submit" class="btn btn-primary" >Изменить</button>
+                                <!--<button id="edit_note_btn" type="submit" class="btn btn-primary" >Изменить</button>-->
+                                <a id="edit_note_btn" href="#" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span> Изменить</a>
                             </div>
                             <div class="col-xs-4">
-                                <button id="edit_note_cancel" type="submit" class="btn btn-default" >Отмена</button>
+                                <!--<button id="edit_note_cancel" type="submit" class="btn btn-default" >Отмена</button>-->
+                                <a id="edit_note_cancel" href="#" class="btn btn-warning"><span class="glyphicon glyphicon-remove"></span> Отмена</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="md-modal" id="modal-remove-note">
+        <div class="md-content">
+            <h3>Удаление записи<br></h3>
+            <div>
+                <form class="form-horizontal"  >
+                    <div class="form-group" >
+                        <label for="inputEmail3" class="col-sm-12 control-label" style="text-align: center;">Вы действительно хотите удалить запись в Базе Знаний?</label>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10 row">
+                            <div class="col-xs-4">
+                                <!--<button id="note_remove_btn" type="submit" class="btn btn-primary" >Да</button>-->
+                                <a id="note_remove_btn" href="#" class="btn btn-success"><span class="glyphicon glyphicon-trash"></span> Да</a>
+                            </div>
+                            <div class="col-xs-4">
+                                <!--<button id="note_remove_cancel" type="submit" class="btn btn-default" >Нет</button>-->
+                                <a id="note_remove_cancel" href="#" class="btn btn-warning"><span class="glyphicon glyphicon-remove"></span> Нет</a>
                             </div>
                         </div>
                     </div>
@@ -614,10 +691,37 @@
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10 row">
                             <div class="col-xs-4">
-                                <button id="edit_user_btn" type="submit" class="btn btn-primary" >Изменить</button>
+                                <!--<button id="edit_user_btn" type="submit" class="btn btn-primary" >Изменить</button>-->
+                                <a id="edit_user_btn" href="#" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span> Изменить</a>
                             </div>
                             <div class="col-xs-4">
-                                <button id="edit_user_cancel" type="submit" class="btn btn-default" >Отмена</button>
+                                <!--<button id="edit_user_cancel" type="submit" class="btn btn-default" >Отмена</button>-->
+                                <a id="edit_user_cancel" href="#" class="btn btn-warning"><span class="glyphicon glyphicon-remove"></span> Отмена</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="md-modal" id="modal-remove-user">
+        <div class="md-content">
+            <h3>Удаление пользователя<br></h3>
+            <div>
+                <form class="form-horizontal"  >
+                    <div class="form-group" >
+                        <label for="inputEmail3" class="col-sm-12 control-label" style="text-align: center;">Вы уверены что хотите удалить пользователя?</label>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10 row">
+                            <div class="col-xs-4">
+                                <!--<button id="results_remove_btn" type="submit" class="btn btn-primary" >Да</button>-->
+                                <a id="user_remove_btn" href="#" class="btn btn-success"><span class="glyphicon glyphicon-trash"></span> Да</a>
+                            </div>
+                            <div class="col-xs-4">
+                                <!--<button id="results_remove_cancel" type="submit" class="btn btn-default" >Нет</button>-->
+                                <a id="user_remove_cancel" href="#" class="btn btn-warning"><span class="glyphicon glyphicon-remove"></span> Нет</a>
                             </div>
                         </div>
                     </div>
@@ -637,10 +741,12 @@
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10 row">
                                 <div class="col-xs-4">
-                                    <button id="results_remove_btn" type="submit" class="btn btn-primary" >Да</button>
+                                    <!--<button id="results_remove_btn" type="submit" class="btn btn-primary" >Да</button>-->
+                                    <a id="results_remove_btn" href="#" class="btn btn-success"><span class="glyphicon glyphicon-trash"></span> Да</a>
                                 </div>
                                 <div class="col-xs-4">
-                                    <button id="results_remove_cancel" type="submit" class="btn btn-default" >Нет</button>
+                                    <!--<button id="results_remove_cancel" type="submit" class="btn btn-default" >Нет</button>-->
+                                    <a id="results_remove_cancel" href="#" class="btn btn-warning"><span class="glyphicon glyphicon-remove"></span> Нет</a>
                                 </div>
                             </div>
                         </div>
@@ -650,21 +756,33 @@
         </div>
 
 
-    <div class="md-modal" id="modal-remove-note">
-        <div class="md-content">
-            <h3>Удаление записи<br></h3>
+
+
+    <div class="md-modal" id="modal-new-project">
+        <div class="md-content" style="width: 795px;">
+            <h3>Новый проект<br></h3><div class="new_project_err">Введите заголовок и описание!</div>
             <div>
                 <form class="form-horizontal"  >
-                    <div class="form-group" >
-                        <label for="inputEmail3" class="col-sm-12 control-label" style="text-align: center;">Вы действительно хотите удалить запись в Базе Знаний?</label>
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-2 control-label">Название</label>
+                        <div class="col-sm-10">
+                            <input size="15" type="text" class="form-control" id="projectTitle" >
+                        </div>
                     </div>
+                    <div class="form-group">
+                        <label for="inputPassword3" class="col-sm-2 control-label">Описание</label>
+                        <div class="col-sm-10">
+                            <TEXTAREA type="test" class="form-control" id="projectDescription" rows="4"></TEXTAREA>
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10 row">
                             <div class="col-xs-4">
-                                <button id="note_remove_btn" type="submit" class="btn btn-primary" >Да</button>
+                                 <a id="new_project_btn" href="#" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span> Сохранить</a>
                             </div>
                             <div class="col-xs-4">
-                                <button id="note_remove_cancel" type="submit" class="btn btn-default" >Нет</button>
+                                <a id="new_project_cancel" href="#" class="btn btn-warning"><span class="glyphicon glyphicon-remove"></span> Отмена</a>
                             </div>
                         </div>
                     </div>
@@ -674,20 +792,71 @@
     </div>
 
 
+    <div class="md-modal" id="modal-edit-project">
+        <div class="md-content" style="width: 795px;">
+            <h3>Редактирование проекта<br></h3>
+            <div>
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-2 control-label">Название</label>
+                        <div class="col-sm-10">
+                            <input size="15" type="text" class="form-control" id="editProjectTitle" >
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputPassword3" class="col-sm-2 control-label">Описание</label>
+                        <div class="col-sm-10">
+                            <TEXTAREA type="test" class="form-control" id="editProjectDescription" rows="3"></TEXTAREA>
+                        </div><span id="status"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10 row">
+                            <div class="col-xs-4">
+                                 <a id="edit_project_btn" href="#" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span> Изменить</a>
+                            </div>
+                            <div class="col-xs-4">
+                                <a id="edit_project_cancel" href="#" class="btn btn-warning"><span class="glyphicon glyphicon-remove"></span> Отмена</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="md-modal" id="modal-remove-project">
+        <div class="md-content">
+            <h3>Удаление проекта<br></h3>
+            <div>
+                <form class="form-horizontal"  >
+                    <div class="alert alert-success"><span class="glyphicon glyphicon-question-sign"></span> Вы действительно хотите удалить Проект и все его заметки?</div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10 row">
+                            <div class="col-xs-4">
+                                <a id="project_remove_btn" href="#" class="btn btn-success"><span class="glyphicon glyphicon-trash"></span> Да</a>
+                            </div>
+                            <div class="col-xs-4">
+                                <a id="project_remove_cancel" href="#" class="btn btn-warning"><span class="glyphicon glyphicon-remove"></span> Нет</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
         <div id="fade" class="black_overlay"></div>
 
-    <div id="chartdiv" style="height:400px;width:300px; ">chart</div>
+
 
 
     <script type="text/javascript" >
 
         $(function(){
-
-
-
-
-
-
 
 
         });
@@ -728,40 +897,82 @@
       <script>
           $(document).ready(function(){
 
+              var mass = [];
+              function viewModel() {
+                  var self = this;
+                  self.currentView = ko.observable("home");
+                  //self.myClass = ko.observable('test5');
+                  self.views = ko.observableArray([]);
+              }
+              var vm = new viewModel();
+
+              Sammy(function () {
+                  this.get('#:view', function () {
+                      vm.currentView(this.params.view);
+                  });
+                  /*this.get('#:notes/:id', function() {
+                      alert(this.params['name'])
+                      kbaseVM.cur_viewed_note = this.params['id'];
+                      vm.currentView("notes");
+                        //get_questions_editing(questionVM.cur_edit_que);
+                      //req = kbaseVM.getNoteDetails(kbaseVM.cur_viewed_note, true);
+
+                  });*/
+                  this.get('#:questions/:id', function() {
+                      //alert(89)
+
+                      if(this.params['id']>1000){
+                          vm.currentView("pages");
+                          kbaseVM.cur_viewed_note = this.params['id'];
+
+                          kbaseVM.cur_viewed_note = kbaseVM.cur_viewed_note - 1000;
+                          req = kbaseVM.getNoteDetails(kbaseVM.cur_viewed_note);
+                          req.success(function(result1){
+                              $('#kbase_blk').html(result1);
+                          });
+                      }
+                      else{
+                          vm.currentView("questions");
+                          questionVM.cur_edit_que = this.params['id'];
+                          get_questions_editing(questionVM.cur_edit_que);
+                      }
+
+                  });
+
+              }).run('#home')
 
 
-       function viewModel() {
-            var self = this;
-            self.currentView = ko.observable();
 
-           if(userVM.role > 0){
-               mass = [
-                   {name: "home", title: "Главная"},
-                   {name: "tests1", title: "Тесты"},
-                   {name: "kbase", title: "База знаний"},
-                   {name: "users", title: "Пользователи"},
-                   {name: "results", title: "Результаты"},
-                   {name: "profile", title: "Профиль"},
-                   {name: "exit", title: "Выход"}
-               ];
-           }
-           else{
-               mass = [
-                   {name: "home", title: "Главная"},
-                   {name: "tests1", title: "Тесты"},
-                   {name: "kbase", title: "База знаний"},
-                   {name: "profile", title: "Профиль"},
-                   {name: "exit", title: "Выход"}
-               ];
-           }
-           //alert()
-           self.views = ko.observableArray(mass);
-        }
 
-            var vm = new viewModel();
+                //console.log(userVM.crenditles)
+
+
+               if(userVM.role > 0){
+                   vm.views = [
+                       {name: "home", title: "Главная"},
+                       {name: "tests1", title: "Тесты"},
+                       {name: "kbase", title: "База знаний"},
+                       {name: "users", title: "Пользователи"},
+                       {name: "results", title: "Результаты"},
+                       {name: "profile", title: "Профиль"},
+                       {name: "exit", title: "Выход"}
+                   ];
+               }
+               else{
+                   vm.views = [
+                       {name: "home", title: "Главная"},
+                       {name: "tests1", title: "Тесты"},
+                       {name: "kbase", title: "База знаний"},
+                       {name: "profile", title: "Профиль"},
+                       {name: "exit", title: "Выход"}
+                   ];
+               }
+               //console.log(userVM.role)
+
+
+
 
             vm.currentView.subscribe(function(newValue) {
-                //alert(newValue)
                 switch (newValue){
                     case "home":                        
                         /*$("#btnNewtask").click(function(){
@@ -801,7 +1012,8 @@
 
                          break;
                      case "kbase":
-                        kbaseVM.get_kbase("kbase_blk");
+                        // alert(4)
+                        projectsVM.getProjectsList("projects_blk");
                          setTimeout(function(){
                              if(userVM.role < 1){
                                  $(".role1").hide();
@@ -821,49 +1033,35 @@
                          req = resultsVM.get_results();
                          req.success(function(result1){
                              $('#results_blk').html(result1);
-                             //alert(422)
                              $("#export_to_excel_btn").click(function(){
-                                 //console.log(12312);
-                                 resultsVM.export_results();
+                                  resultsVM.export_results();
                                  })
-                             //}, 1500);
-                             //alert(123123123)
-                             });
+                              });
                          break;
                      case "questions":
-                        //
+                         alert(baseVM.cur_viewed_note)
+                        if(kbaseVM.cur_viewed_note > 0){
+                            req = kbaseVM.getNoteDetails(kbaseVM.cur_viewed_note);
+                            req.success(function(result1){
+                                $('#kbase_blk').html(result1);
+                            });
+                        }
                          break;
+                    case "pages":
+                        /*
+                         break;*/
                     case "profile":
                         $('#user_login').text(userVM.login);
                         $('#user_fio').text(userVM.user_fio);
                         break;
                     case "exit":
                         userVM.exit_user();
-                        /*
-                        userVM.login = "";
-                        userVM.role = 0;
-                        */
-                        
                         break;
                 }
             });
 
 
             ko.applyBindings(vm);
-            Sammy(function () {
-                this.get('#:view', function () {
-                    vm.currentView(this.params.view);
-
-                });
-                this.get('#:questions/:id', function() {
-                    vm.currentView("questions");
-                    questionVM.cur_edit_que = this.params['id'];
-                    get_questions_editing(questionVM.cur_edit_que);
-                });
-
-
-
-            }).run('#home')
                
                /* .error(message, original_error){
                     alert(message+" "+original_error)
@@ -918,28 +1116,6 @@ var newNC = $("#noteContent")/*.css("height","100%").css("width","100%")*/.htmlb
 });
             </script>
     <script type='text/javascript' src='js/bootstrap.min.js'></script>
-<script>
-    $(document).ready(function(){
-       /* var data = [
-            ['Heavy Industry', 12],['Retail', 9], ['Light Industry', 14],
-            ['Out of home', 16],['Commuting', 7], ['Orientation', 9]
-        ];
-        var plot1 = jQuery.jqplot ('chart1', [data],
-            {
-                seriesDefaults: {
-                    // Make this a pie chart.
-                    renderer: jQuery.jqplot.PieRenderer,
-                    rendererOptions: {
-                        // Put data labels on the pie slices.
-                        // By default, labels show the percentage of the slice.
-                        showDataLabels: true
-                    }
-                },
-                legend: { show:true, location: 'e' }
-            }
-        );*/
-    });</script>
-
 
 </body>
 </html>

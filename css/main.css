@@ -274,7 +274,7 @@ a {
     td a:hover{
         cursor: pointer;
     }
-    .new_test_err, .log_in_err, .register_err, .new_que_err, .new_note_err{
+    .new_test_err, .log_in_err, .register_err, .new_que_err, .new_note_err, .new_project_err{
         text-align: center; 
         padding: 0px !important; 
         display: none;
@@ -303,15 +303,16 @@ a {
         display: none;
         width: 60%;
         background: rgb(207, 203, 203);
-        border: 3px solid green;
+        border: 3px solid #fff;
         border-radius: 9px;
         margin: 18px 20% 10px 20%;
         height: 44px;
-        color: black;
+        color: rgb(253, 250, 250);
         text-align: center;
-        padding: 8px;
+        padding: 4px;
         position: absolute;
         z-index: 1000;
+        font-size: 15pt;
     }
     #btnNewtask, #new_note{
         margin: 3px;
@@ -321,4 +322,13 @@ a {
         padding: 10px;
         color: white;
         font-size: 22pt;
+    }
+    .project{
+        text-decoration: underline;
+    }
+    .project:before{
+         content: '';
+     }
+    .project:after{
+        content: '';
     }
