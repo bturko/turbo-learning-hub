@@ -58,6 +58,9 @@ class Notes {
         echo '</table>';
     }
 
+    /**
+     * @param $_REQUESTs
+     */
     public function addNote($_REQUESTs){
         $title = htmlspecialchars($_REQUESTs["title"]);
         $content = $_REQUESTs["content"];
@@ -80,13 +83,13 @@ class Notes {
         //$this->getNotesList($user_role);
     }
 
+    /**
+     * @param $_REQUESTs
+     */
     public function updateNote($_REQUESTs){
         $note_id = htmlspecialchars($_REQUESTs["note_id"]);
         $title = htmlspecialchars($_REQUESTs["title"]);
         $content = $_REQUESTs["content"];
-        //$content = nl2br(htmlspecialchars($content));
-        //$content = preg_replace('#(\\\r|\\\r\\\n|\\\n)#', '<br/>',$content);
-        // $content = str_replace(array("'", "\"", "&quot;"), "", htmlspecialchars($content ) );
         $user_role = htmlspecialchars($_REQUESTs["user_role"]);
 
         if($note_id=="" || $title=="" || $content==""){
@@ -102,7 +105,7 @@ class Notes {
                 echo "Ошибка!";
             }
         }
-        $this->getNotesList($user_role);
+
     }
 
     /**
@@ -110,19 +113,20 @@ class Notes {
      */
     public function removeNote($_REQUESTs){
         $note_id = htmlspecialchars($_REQUESTs["note_id"]);
-        $user_role = htmlspecialchars($_REQUESTs["user_role"]);
+        //$user_role = htmlspecialchars($_REQUESTs["user_role"]);
 
-        if($note_id=="" || $user_role==""){
-            echo '{"status": "Не передан требуемый параметр!"}';
+        if($note_id==""){
+            echo '{"result": "error", "messsage": "Не передан требуемый параметр!"}';
         }
         else{
             $result = mysql_query("SET NAMES 'utf8'; ");
+            echo "DELETE FROM `kbase` WHERE id = $note_id;";
             $result = mysql_query("DELETE FROM `kbase` WHERE id = $note_id;");
             if ($result) {
-                echo '{"status": "success"}';
+                echo '{"result": "success", "message": ""}';
             }
             else{
-                echo '{"status": "Ошибка сохранения в БД!"}';
+                echo '{"result": "error", "message": "Ошибка сохранения в БД!"}';
             }
         }
     }

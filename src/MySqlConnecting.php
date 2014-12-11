@@ -3,17 +3,17 @@
 
 class MySqlConnecting {
 
-    public function connectDB(){
-        try {
-            $dbh = new PDO('mysql:host=localhost;dbname=test', $user, $pass);
-            foreach($dbh->query('SELECT * from FOO') as $row) {
-                print_r($row);
+    private $dbh;
+
+    public function getDBH(){
+        return$this->dbh;
+    }
+    public function connectDB($db_name, $user, $pass){
+
+            $this->dbh = new PDO('mysql:host=localhost;dbname='.$db_name, $user, $pass);
+            foreach($this->dbh->query('SELECT * from users LIMIT 0,1') as $row) {
+                //print_r($row);
             }
-            $dbh = null;
-        } catch (PDOException $e) {
-            print "Error!: " . $e->getMessage() . "<br/>";
-            die();
-        }
     }
 
     /**
@@ -25,7 +25,7 @@ class MySqlConnecting {
             $link = mysql_connect('localhost', 'root', '');
         }
         else{
-            $link = mysql_connect('localhost', '', '');
+            $link = mysql_connect('localhost', 'clhusr', 'kzkzkzkzkz-Zcjkfcevf');
         }
 
         if (!$link) {
