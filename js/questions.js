@@ -12,32 +12,73 @@ function Quetions() {
     self.results = ""; // Error answers string
     self.right_answers_count = 0;
     self.cc = 0;
-    self.get_questions = function(test_id){
-        if(test_id){
+
+    self.addQuestion = function(test_id, text, var0, var1, var2, var3, var4, rig_var){
+        var req = $.ajax({
+            url: "ajax.php?addQuestion",
+            data: {"test_id": test_id, "text": text, "var0": var0, "var1": var1, "var2": var2, "var3": var3, var4: var4, rig_var: rig_var},
+            method: "post"
+        })
+            .success(function(response){
+                self.getQuestionsList(test_id);
+            })
+            .fail(function(response){
+            });
+        return req;
+    }
+    self.getQuestionsList = function(test_id){
+        if(test_id >0){
             var req = $.ajax({
-                url: "ajax.php?get_questions",
-                data: {"testId": test_id, "login": userVM.login},
+                url: "ajax.php?getQuestionsList",
+                data: {"test_id": test_id, "login": userVM.login},
                 method: "post"
             })
                 .success(function(response){
-                   // logVM.i("get_questions: "+response);
-                    //alert(response)
-                    var json = JSON.parse(response)
-                    if(json.title=="no_params") logVM.informer("Не передан параметр!") //$("q_blk_content").html("<table><tr><td style=''>Вопросов еще нет</td></tr></table>")
+                     $("#q_blk_content").html(response);
+                    $("#sh_newquestion").click(function(){
+                       // alert(345);
+                        $("#newQueText").val("");
+                        $("#var0").attr('checked', false);
+                        $("#new_cb_toggle_blk").show();
+                        $("#var1").val("");
+                        $("#var2").val("");
+                        $("#var3").val("");
+                        $("#var4").val("");
+                        $("#rig_var :nth-child(1)").attr("selected", "selected");
+                        spa.show_dialog("modal-new-que");
+                    });
                 })
                 .fail(function(response){
-                    //return req;
                 });
             return req;
         }
         else{
-            logVM.i("get_questions: Отсутствует обязательный параметр!");
+            logVM.i("getQuestionsList: Отсутствует обязательный параметр!");
             return "";
         }
     }
+    self.getQuestionForEditing = function(){
+        $.ajax({
+            url: "ajax.php?getQuestionForEditing",
+            method: "post",
+            data: {
+                test_id: test_id
+            }
+        })
+            .success(function(response){
+                $("#q_blk_content").html(response)
+
+            })
+            .error(function(response){
+                $("#test_messages").html('<div class="alert alert-error" role="alert"Ошибка!</div>');
+            })
+            .complete(function(){
+
+            });
+    }
     self.next = function(){
         if( $('input[name=gn'+self.cur_question+']:checked').val() != undefined || $("#my_answer").val()!=""){
-            spa.change_uri("tests1")
+            spa.change_uri("tests")
             $("#question"+self.cur_question).hide(500);
 
 
@@ -66,7 +107,6 @@ function Quetions() {
             }
 
 
-
             $("#my_answer").val("");
 
 
@@ -88,6 +128,7 @@ function Quetions() {
                     $("#watch_que_cancel").hide();
                     $("#next").hide();
                     $("#my_results").html(self.right_answers_count+"/"+self.question_cnt+"<br><br>"+self.results+"<Br><br>");
+                    testsVM.getTestsList("tests_blk", userVM.role)
                 });
 
             }
@@ -96,38 +137,24 @@ function Quetions() {
             alert("Введите ответ!")
         }
     }
-    self.new_que = function(test_id, text, var0, var1, var2, var3, var4, rig_var){
+    self.removeQuestion = function(que_id){
         var req = $.ajax({
-            url: "ajax.php?new_question",
-            data: {"test_id": test_id, "text": text, "var0": var0, "var1": var1, "var2": var2, "var3": var3, var4: var4, rig_var: rig_var},
-            method: "post"
-        })
-            .success(function(response){
-
-            })
-            .fail(function(response){
-                //return req;
-            });
-        return req;
-
-    }
-    self.remove_que = function(que_id){
-        var req = $.ajax({
-            url: "ajax.php?remove_question",
+            url: "ajax.php?removeQuestion",
             data: {"que_id": que_id},
             method: "post"
         })
             .success(function(response){
-
+                //alert(self.test_id);
+                self.getQuestionsList(self.cur_edit_que);
             })
             .fail(function(response){
                 //return req;
             });
         return req;
     }
-    self.get_que_details = function(que_id){
+    self.getQuestionForEditing = function(que_id){
         var req = $.ajax({
-            url: "ajax.php?get_que_details",
+            url: "ajax.php?getQuestionForEditing",
             data: {"que_id": que_id},
             method: "get"
         })
@@ -139,20 +166,19 @@ function Quetions() {
             });
         return req;
     }
-    self.edit_que = function(q_id, test_id, text, var0, var1, var2, var3, var4, rig_var, test_id){
+    self.updateQuestion = function(q_id, test_id, text, var0, var1, var2, var3, var4, rig_var, test_id){
         var req = $.ajax({
-            url: "ajax.php?question_update",
+            url: "ajax.php?updateQuestion",
             data: {"q_id": q_id, "test_id": test_id, "text": text, "opened": var0, "var1": var1, "var2": var2, "var3": var3, var4: var4, rig_var: rig_var, test_id: test_id},
             method: "post"
         })
             .success(function(response){
-
+                self.getQuestionsList(self.cur_edit_que);
             })
             .fail(function(response){
                 //return req;
             });
         return req;
-
     }
     self.set_result = function(){
         var req = $.ajax({

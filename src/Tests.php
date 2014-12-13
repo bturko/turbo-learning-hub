@@ -136,21 +136,26 @@ class Tests
         }
     }
 
-    public function updateTest($_REQUESTs){
+    /**
+     * @param $_REQUESTs
+     * @param $pdo
+     *
+     * @todo return result object
+     */
+    public function updateTest($_REQUESTs, $pdo){
         $test_id = htmlspecialchars($_REQUESTs["editTestId"]);
         $test_title = htmlspecialchars($_REQUESTs["editTestTitle"]);
         $test_description = htmlspecialchars($_REQUESTs["editTestDescription"]);
         $user_role = htmlspecialchars($_REQUESTs["user_role"]);
         $login = htmlspecialchars($_REQUESTs["login"]);
 
-        $result = mysql_query("SET NAMES 'utf8'; ");
-        $result = mysql_query("UPDATE `tests` SET title = '".$test_title."',description = '".$test_description."' WHERE id = ".$test_id."; ");
-        if ($result) {
-           // $test = new Tests();
-            $this->getTestsList( $user_role, $login );
+        $sql = "UPDATE `tests` SET title = '".$test_title."',description = '".$test_description."' WHERE id = ".$test_id."; ";
+        try {
+            $pdo->exec("SET NAMES 'utf8';");
+            $pdo->exec($sql);
         }
-        else{
-            echo "Ошибка при изменении!";
+        catch(PDOException $e) {
+            echo $e->getMessage();
         }
     }
 

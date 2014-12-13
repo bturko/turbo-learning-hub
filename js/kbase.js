@@ -38,17 +38,6 @@ function KBase() {
             //self.get_kbase(userVM.role);
 
         });
-        /*$.ajax({
-            url: "ajax.php?add_note",
-            method: "post",
-            data: {title: title, user_role: userVM.role, content: $("#noteContent").val()}
-        })
-            .success(function(response){
-                $("#"+elm_id).html(response);
-            })
-            .fail(function(response){
-                $("#"+elm_id).html("Error!");
-            });*/
     }
     self.getNoteDetails = function(note_id, if_not_edit){
         self.edit_nid = note_id;
@@ -75,8 +64,9 @@ function KBase() {
                     //alert(part1)
                 }
                 else{
-                    $("#kbase_blk").html("<div style='background: #efefef;padding: 10px;'><h2><span class='glyphicon glyphicon-paperclip' aria-hidden='true'></span> "+part1+"</h2><br>"+part2+"</div>");
+                    $("#kbase_blk").html("<div style='background: #cdcdcd; padding: 15px;'><h2><span class='glyphicon glyphicon-paperclip' aria-hidden='true'></span> "+part1+"</h2><br>"+part2+"</div>");
                 }
+                $("td span").css("color", "black");
             })
             .fail(function(response){
                 $("#editNoteTitle").val("Ошибка!");
@@ -86,7 +76,7 @@ function KBase() {
     self.edit_note = function(title, content, elm_id){
         var txt = $("#editNoteContent").val();
         if(txt=="") txt = editNC.get_html();
-        console.log(txt)
+       // console.log(txt)
         $.post('ajax.php?update_note', {note_id: self.edit_nid, title: title, user_role: userVM.role, content: txt}, function(result){
             $("#"+elm_id).html(result);
             var n = result.search("требуемый");
@@ -116,20 +106,20 @@ function KBase() {
             });
         spa.hide_dialog("modal-edit-note");*/
     }
-    self.remove_note = function(){
-        note_id = self.remove_id;
+    self.removeNote = function(){
+        note_id = self.cur_viewed_note; //remove_id;
+        //alert(note_id);
         if(note_id > 0){
             var req = $.ajax({
-                url: "ajax.php?remove_note",
+                url: "ajax.php?removeNote",
                 method: "post",
                 data: {note_id: note_id, user_role: userVM.role}
                 })
                 .success(function(response){
                     logVM.informer("Заметка удалена!")
-                    //$("#kbase_blk").html(response);
                 })
                 .fail(function(response){
-                    //$("#"+elm_id).html("Error!");
+
                 });
             return req;
         }

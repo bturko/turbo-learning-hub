@@ -44,7 +44,7 @@ class Projects {
                 }
                 while ($row2 = mysql_fetch_array($result2)) {
                     $n_id = 1000 + $row2['id'];
-                    echo '<a href="#questions/'.$row2['id'].'" class="btn btn-xs btn-info" style="margin: 2px"><span class="glyphicon glyphicon-paperclip"></span>  </a> <a href="#questions/'.$n_id.'" style="color: #252525;" >'.$row2['title'].'</a><br>';
+                    echo '<a href="#questions/'.$n_id.'" class="btn btn-xs btn-info" style="margin: 2px"><span class="glyphicon glyphicon-paperclip"></span>  </a> <a href="#questions/'.$n_id.'" style="color: #252525;" >'.$row2['title'].'</a><br>';
                 }
                 echo '</div>
                </td>
@@ -57,7 +57,7 @@ class Projects {
             else{
                 echo '
                <td>
-                 <span class="glyphicon glyphicon-folder-close" style="color: yellow;"></span> <a onclick="$(this).next().next().slideToggle(500);">'.strtoupper($row["title"]).'</a>
+                 <span class="glyphicon glyphicon-folder-close" style="color: yellow;"></span> <a onclick="$(this).next().slideToggle(500);">'.strtoupper($row["title"]).'</a>
                    <div  style="display: none; padding: 8px; margin: 5px 1px 5px 16px; background: #cdcdcd; border: #898989 1px solid">';
                     $result2 = mysql_query("SELECT * FROM `kbase` WHERE project_id=".$row["id"]."; ");
                     if (!$result2) {
@@ -65,7 +65,8 @@ class Projects {
                         exit;
                     }
                     while ($row2 = mysql_fetch_array($result2)) {
-                        echo '<a href="#pages/1/'.$row2['id'].'" class="btn btn-xs btn-info" style="margin: 2px"><span class="glyphicon glyphicon-paperclip"></span>  </a> <a style="color: #252525;" href="#pages/1/'.$row2['id'].'">'.$row2['title'].'</a><br>';
+                        $n_id = 1000 + $row2['id'];
+                        echo '<a href="#questions/'.$n_id.'" class="btn btn-xs btn-info" style="margin: 2px"><span class="glyphicon glyphicon-paperclip"></span>  </a> <a style="color: #252525;" href="#questions/'.$n_id.'">'.$row2['title'].'</a><br>';
                     }
                     echo '</div>
                </td>

@@ -55,6 +55,7 @@
             }
        }
 
+       // console.log($(".nav-pills>li").css("display"))
 
        setTimeout(function(){
 
@@ -68,14 +69,15 @@
 
 
 
-        $("ul>li:last-child").hide();
+       // $("ul>li:last-child").hide();
 
 
-       /* setTimeout(function(){*/
+        setTimeout(function(){
             $("#btnNewtask").click(function(){
                spa.show_dialog("modal-new-test");
             });
             $("#sh_newquestion").click(function(){
+                //alert(23423423)
                 $("#newQueText").val("");
                 $("#var0").attr('checked', false);
                 $("#new_cb_toggle_blk").show();
@@ -91,20 +93,15 @@
                 newNC.set_text("");
                 spa.show_dialog("modal-new-note");
             });
-            //console.log($("#sh_newquestion"),"1500")
-      /*  }, 1500);*/
+       }, 1500);
 
        /* setInterval(function(){
             $("#btnNewtask").click(function(){
                spa.show_dialog("modal-new-test");
             });
-            $("#sh_newquestion").click(function(){
-                spa.show_dialog("modal-new-que");
-            });
-            $("#new_note").click(function(){
+           $("#new_note").click(function(){
                 spa.show_dialog("modal-new-note");
             });
-            //console.log($("#sh_newquestion"),"int")
         }, 2000);*/
 
 
@@ -117,9 +114,9 @@
                 $(".new_test_err").css({"display": "block"});
             }
             else{
-                testVM.new_test($("#newTaskTitle").val(), $("#newTaskDescription").val(), userVM.role)
+                testVM.createTest($("#newTaskTitle").val(), $("#newTaskDescription").val(), userVM.role)
                 spa.hide_dialog("modal-new-test");
-                spa.change_uri("tests1")
+                spa.change_uri("tests")
             }
             
         });
@@ -129,86 +126,38 @@
         $("#test_create_cancel").click(function(){
             spa.hide_dialog("modal-new-test");
           $(".new_test_err").css({"display": "none"});
-            spa.change_uri("tests1")
+            spa.change_uri("tests")
         });
 
 
 
         $("#test_remove_btn").click(function(){
-              $.ajax({
-                    url: "ajax.php?remove_test",
-                    method: "post",
-                    data: {
-                        removeTestId: spa.cur_remove_test_id,
-                        user_role: userVM.role
-                    }
-                })
-                .success(function(response){
-                    //$("#test_messages").html('<div class="alert alert-success" role="alert">Тест удален!</div>');
-                     logVM.informer("Тест удален!")
-
-                    setTimeout(function(){
-                        testVM.get_tests("tests", userVM.role);
-                    }, 400);
-                })
-                .error(function(response){
-                    $("#test_messages").html('<div class="alert alert-error" role="alert"Ошибка!</div>');
-                })
-                .complete(function(){
-                     //$(".new_test_err").css({"display": "none"});
-
-                     spa.change_uri("tests1")
-                     // alert(34)
-                     hideRemoveTestDlg();
-                });
+            testVM.removeTest(spa.cur_remove_test_id);
+             spa.change_uri("tests");
         });
 
 
         $("#test_remove_cancel").click(function(){
-            spa.change_uri("tests1")
+            spa.change_uri("tests")
             hideRemoveTestDlg();
         });
 
 
         $("#test_edit_btn").click(function(){
-            $.ajax({
-                url: "ajax.php?edit_test",
-                method: "post",
-                data: {
-                    editTestId: spa.cur_edit_test_id,
-                    editTestTitle: $("#editTaskTitle").val(),
-                    editTestDescription: $("#editTaskDescription").val(),
-                    user_role: userVM.role,
-                    login: userVM.login
-                }
-            })
-                .success(function(response){
-                    logVM.informer("Тест изменен!");
-                    $("#tests").html(response);
-                   //
-                })
-                .error(function(response){
-                    $("#test_messages").html('<div class="alert alert-error" role="alert"Ошибка!</div>');
-                })
-                .complete(function(){
-                    //$(".new_test_err").css({"display": "none"});
-
-                    spa.change_uri("tests1")
-                    hideEditTestDlg();
-                });
+            testVM.updateTest();
         });
 
 
         $("#test_edit_cancel").click(function(){
-            hideEditTestDlg();
-            spa.change_uri("tests1")
+            spa.hide_dialog("modal-edit-test");
+            spa.change_uri("tests")
         });
 
         $("#watch_que_btn").click(function(){
              $("#question0").show(500);
             $("#next").show();
             $("#watch_que_btn").hide();
-            spa.change_uri("tests1");
+            spa.change_uri("tests");
             $("#que_counter").text("1/"+questionVM.question_cnt);
             questionVM.cur_question = 0;
             questionVM.results = "";
@@ -219,12 +168,12 @@
             $("#next").hide();
             $("#watch_que_btn").show();
             //hideEditTestDlg();
-            spa.change_uri("tests1")
+            spa.change_uri("tests")
         });
 
         $("#watch_que_close").click(function(){
             spa.hide_popup("watch_test_popup");
-            spa.change_uri("tests1");
+            spa.change_uri("tests");
 
            //req.success(function(){
                 questionVM.cur_question = 0;
@@ -245,16 +194,15 @@
         $("#que_new_cancel").click(function(){
             //hideNewQueDlg();
             spa.hide_dialog("modal-new-que");
-            spa.change_uri("tests")
+            spa.change_uri("questions/" + questionVM.cur_edit_que)
         });
 
         $("#que_new_btn").click(function(){
             if( $("#newQueText").val()!="" && $("#var1").val()!="" ){
-                var req = questionVM.new_que(questionVM.cur_edit_que ,$("#newQueText").val(), $("#var0").is(":checked"), $("#var1").val(), $("#var2").val(),$("#var3").val(),$("#var4").val(),$("#rig_var").val())
+                var req = questionVM.addQuestion(questionVM.cur_edit_que ,$("#newQueText").val(), $("#var0").is(":checked"), $("#var1").val(), $("#var2").val(),$("#var3").val(),$("#var4").val(),$("#rig_var").val())
                 req.success(function(){
-                    logVM.informer("Вопрос успешно создан!")
+                    logVM.informer("Вопрос успешно создан!");
                 })
-                //hideNewQueDlg();
                 spa.hide_dialog("modal-new-que");
                 spa.change_uri("questions/"+questionVM.cur_edit_que)
             }
@@ -266,7 +214,7 @@
         });
 
         $("#que_remove_btn").click(function(){
-            var req = questionVM.remove_que(questionVM.remove_que_id);
+            var req = questionVM.removeQuestion(questionVM.remove_que_id);
             req.success(function(){
                 logVM.informer("Вопрос успешно удален!")
             })
@@ -312,21 +260,23 @@
         $("#edit_note_btn").click(function(){
             kbaseVM.edit_note( $("#editNoteTitle").val(), $("#editNoteContent").val(), "kbase_blk" )
             spa.hide_dialog("modal-edit-note");
-            spa.change_uri("querstions/"+kbaseVM.cur_viewed_note)
+            var a = 1000 + kbaseVM.cur_viewed_note;
+            spa.change_uri("questions/"+a);
         });
 
 
         $("#edit_note_cancel").click(function(){
             //hideNewNoteDlg();
             spa.hide_dialog("modal-edit-note");
-            spa.change_uri("querstions/"+kbaseVM.cur_viewed_note)
+            var a = 1000 + kbaseVM.cur_viewed_note;
+            spa.change_uri("questions/"+a);
         });
 
 
 
         $("#que_edit_btn").click(function(){
             test_id = questionVM.cur_edit_que;
-            var req = questionVM.edit_que(questionVM.edit_que_id, questionVM.test_id, $("#editQueText").val(), $("#editvar0").is(":checked"), $("#editvar1").val(), $("#editvar2").val(), $("#editvar3").val(), $("#editvar4").val(), $("#editrig_var option:selected").val())
+            var req = questionVM.updateQuestion(questionVM.edit_que_id, questionVM.test_id, $("#editQueText").val(), $("#editvar0").is(":checked"), $("#editvar1").val(), $("#editvar2").val(), $("#editvar3").val(), $("#editvar4").val(), $("#editrig_var option:selected").val())
             //console.log(req)
             req.success(function(){
                logVM.informer("Вопрос успешно изменен!")
@@ -390,30 +340,30 @@
         });
 
 
-
         $("#note_remove_btn").click(function(){
-            var req = kbaseVM.remove_note();
+            var req = kbaseVM.removeNote();
             req.success(function(response){
                 var json = JSON.parse(response);
                 if(json.status == "success"){
                     logVM.informer("Запись была удалена!")
                     spa.hide_dialog("modal-remove-note");
                     setTimeout(function(){
-                        //var req0 =
                          kbaseVM.get_kbase("kbase_blk");
-                      
                     }, 200);
                 }
                 else{
                     logVM.informer("Возникла ошибка!", true)
                 }
             });
-            spa.change_uri("kbase");
+            spa.hide_dialog("modal-remove-note");
+            //spa.change_uri("kbase/");
+            location.reload("#kbase");
         });
 
         $("#note_remove_cancel").click(function(){
             spa.hide_dialog("modal-remove-note");
-            spa.change_uri("kbase");
+            var a = 1000 + kbaseVM.cur_viewed_note;
+            spa.change_uri("questions/"+a);
         });
 
         $("#user_remove_btn").click(function(){
@@ -497,6 +447,10 @@
             spa.change_uri("kbase")
         });
 
+
+        if(userVM.login!="admin"){
+            $(".svetik").css("display", "none");
+        }
     });
 
 
@@ -546,14 +500,11 @@
     }
 
 
+    function watch_test(test_id){
 
-function watch_test(test_id){
-
-
-    questionVM.test_id = test_id;
-    var req = questionVM.get_questions(test_id);
-    //console.log(req)
-    req.success(function( response ){
+        questionVM.test_id = test_id;
+        var req = questionVM.getQuestionForEditing(test_id);
+        req.success(function( response ){
          $("#sh_newquestion").click(function(){
              $("#newQueText").val("");
              $("#var0").attr('checked', false);
@@ -607,43 +558,14 @@ function watch_test(test_id){
     }
 
 function edit_test(test_id){
+    //alert(343)
     spa.cur_edit_test_id = test_id;
     spa.show_dialog("modal-edit-test");
     testVM.get_test_details( test_id );
 }
 
 function get_questions_editing(test_id){
-    //console.log("test_id="+test_id)
-    $.ajax({
-        url: "ajax.php?get_questions_editing",
-        method: "post",
-        data: {
-            testId: test_id
-        }
-    })
-        .success(function(response){
-            $("#q_blk_content").html(response)
-            //var json = JSON.parse(response);//response.parseJSON();
-            //$("#editTaskTitle").val(json.title)
-            //$("#editTaskDescription").val(json.description)
-             $("#sh_newquestion").click(function(){
-                 $("#newQueText").val("");
-                 $("#var0").attr('checked', false);
-                 $("#new_cb_toggle_blk").show();
-                 $("#var1").val("");
-                 $("#var2").val("");
-                 $("#var3").val("");
-                 $("#var4").val("");
-                 $("#rig_var :nth-child(1)").attr("selected", "selected");
-                spa.show_dialog("modal-new-que");
-            });
-        })
-        .error(function(response){
-            $("#test_messages").html('<div class="alert alert-error" role="alert"Ошибка!</div>');
-        })
-        .complete(function(){
-
-        });
+    questionVM.getQuestionsList(test_id);
 }
 
 
@@ -673,11 +595,9 @@ function watch_questions(test_id){
 
 
 
-function remove_que(que_id){
+function remove_question(que_id){
     questionVM.remove_que_id = que_id;
-    //showRemoveQueDlg();
-    spa.show_dialog("modal-remove-que")
-
+    spa.show_dialog("modal-remove-que");
 }
 
 function edit_que(que_id){
@@ -685,7 +605,7 @@ function edit_que(que_id){
     questionVM.test_id = questionVM.cur_edit_que;
     //questionVM.edit_que_id = que;
     //showRemoveQueDlg();
-    var req = questionVM.get_que_details(que_id);
+    var req = questionVM.getQuestionForEditing(que_id);
     //console.log(req)
     req.success(function(jsontext){
         //console.log(jsontext)
@@ -894,3 +814,4 @@ function edit_que(que_id){
 function redir_url(){
     window.location.replace("main.php#notes/1/15");
 }
+

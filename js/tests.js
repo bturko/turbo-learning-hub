@@ -1,9 +1,9 @@
 function Tests() {
     var self = {};
-    self.get_tests = function(elm_id, user_role){
+    self.getTestsList = function(elm_id, user_role){
         if(elm_id && user_role){
             $.ajax({
-                url: "ajax.php?get_tests",
+                url: "ajax.php?getTestsList",
                 method: "post",
                 data: {
                     user_role: user_role,
@@ -27,9 +27,9 @@ function Tests() {
             logVM.w("get_tests: Отсутствует обязательный параметр!");
         }
     }
-    self.new_test = function(title, description, role){
+    self.createTest = function(title, description, role){
         $.ajax({
-            url: "ajax.php?new_test",
+            url: "ajax.php?createTest",
             method: "post",
             data: {
                 newTaskTitle: title,
@@ -39,25 +39,22 @@ function Tests() {
             }
         })
             .success(function(response){
-                //$("#test_messages").html('<div class="alert alert-success" role="alert">Новый тест создан!</div>');
                 var m = response.search("требуемый");
-                console.log(m)
                 if( m < 0){
-                    logVM.informer("Новый тест успешно создан!")
+                    logVM.informer("Новый тест успешно создан!");
                 }
                 $("#tests").html(response);
                 setTimeout(function(){
                     $("#test_messages").text("");
-                }, 4000)
+                }, 4000);
+                self.getTestsList("tests_blk", userVM.role);
             })
             .error(function(response){
                 $("#test_messages").html('<div class="alert alert-error" role="alert"Ошибка!</div>');
             })
             .complete(function(){
                 $(".new_test_err").css({"display": "none"});
-                //hideNewTaskDlg();
-                self.hide_dialog("modal-new-test");
-
+                spa.hide_dialog("modal-new-test");
             });
     };
     self.get_test_details = function(test_id){
@@ -73,11 +70,63 @@ function Tests() {
                 var json = JSON.parse(response);
                 $("#editTaskTitle").val(json.title)
                 $("#editTaskDescription").val(json.description);
+
             })
             .error(function(response){
                 logVM.informer("Ошибка!");
             })
             .complete(function(){
+            });
+    }
+    self.updateTest = function(){
+        $.ajax({
+            url: "ajax.php?updateTest",
+            method: "post",
+            data: {
+                editTestId: spa.cur_edit_test_id,
+                editTestTitle: $("#editTaskTitle").val(),
+                editTestDescription: $("#editTaskDescription").val(),
+                user_role: userVM.role,
+                login: userVM.login
+            }
+        })
+            .success(function(response){
+                logVM.informer("Тест изменен!");
+                $("#tests").html(response);
+                self.getTestsList("tests_blk", userVM.role);
+            })
+            .error(function(response){
+                $("#test_messages").html('<div class="alert alert-error" role="alert"Ошибка!</div>');
+            })
+            .complete(function(){
+                spa.change_uri("tests")
+                spa.hide_dialog("modal-edit-test");
+            });
+    }
+    self.removeTest = function(test_id){
+        $.ajax({
+            url: "ajax.php?remove_test",
+            method: "post",
+            data: {
+                removeTestId: test_id,
+                user_role: userVM.role
+            }
+        })
+            .success(function(response){
+                logVM.informer("Тест удален!")
+
+                setTimeout(function(){
+                    self.getTestsList("tests", userVM.role)
+                }, 400);
+            })
+            .error(function(response){
+                $("#test_messages").html('<div class="alert alert-error" role="alert"Ошибка!</div>');
+            })
+            .complete(function(){
+                spa.hide_dialog("modal-remove-test");
+                //hideRemoveTestDlg();
+                self.getTestsList("tests_blk", userVM.role)
+                spa.change_uri("tests")
             });
     }
     return self;
