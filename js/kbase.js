@@ -24,14 +24,10 @@ function KBase() {
                 content: $("#noteContent").val(),
                 project_id: self.creating_note_proj_id
             }, function(result){
-                //$("#"+elm_id).html(result);
-                /*setTimeout(function(){
-                    location.reload();
-                }, 100) ;*/
+
                projectsVM.getProjectsList("projects_blk");
 
                 var n = result.search("Ошибка");
-                //console.log(n)
             if(n < 0){
                 logVM.informer("Запись успешно добавлена!")
             }
@@ -73,11 +69,11 @@ function KBase() {
             });
 
     }
-    self.edit_note = function(title, content, elm_id){
+    self.editNote = function(title, content, elm_id){
         var txt = $("#editNoteContent").val();
         if(txt=="") txt = editNC.get_html();
        // console.log(txt)
-        $.post('ajax.php?update_note', {note_id: self.edit_nid, title: title, user_role: userVM.role, content: txt}, function(result){
+        $.post('ajax.php?updateNote', {note_id: self.edit_nid, title: title, user_role: userVM.role, content: txt}, function(result){
             $("#"+elm_id).html(result);
             var n = result.search("требуемый");
             var m = result.search("Ошибка!");
@@ -107,8 +103,7 @@ function KBase() {
         spa.hide_dialog("modal-edit-note");*/
     }
     self.removeNote = function(){
-        note_id = self.cur_viewed_note; //remove_id;
-        //alert(note_id);
+        note_id = self.cur_viewed_note;
         if(note_id > 0){
             var req = $.ajax({
                 url: "ajax.php?removeNote",

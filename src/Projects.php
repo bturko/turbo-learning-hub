@@ -1,5 +1,5 @@
 <?php
-
+namespace TLH\Projects;
 
 class Projects {
     public function createProject($_REQUESTs){

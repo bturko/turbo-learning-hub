@@ -1,6 +1,6 @@
 <?php
 
-   // namespace src;
+namespace TLH\Questions;
 
 /**
  * Class Questions
@@ -47,7 +47,6 @@ class Questions
      */
     public function getQuestionsList($_REQUESTs, $pdo){
         $test_id = htmlspecialchars($_REQUESTs["test_id"]);
-        //echo 'T='.$_REQUESTs["test_id"];
 
         if($test_id < 1){
             echo 'Ошибка!';
@@ -85,16 +84,19 @@ class Questions
      /**
       * @param $que_id
       */
-    public function getQuestionDetails($que_id, $pdo){
+    public function getQuestionForEditing($que_id, $pdo){
 
         try {
             $pdo->exec("SET NAMES 'utf8';");
             $sql = "SELECT `id`, `test_id`, `text`, `opened`, `answers`, `right_answer`, `date_create` FROM `questions` WHERE id=".$que_id." ;";
             //$pdo->exec($sql);
-            $pdo = $pdo->prepare("select id from some_table where name = :name");
-            $pdo->execute(array(':name' => "Jimbo"));
-            $row = $pdo->fetch();
-            echo '{"status": "Ok", "id":'.$row[0].', "test_id":'.$row[1].', "text": "'.$row[2].'", "opened": "'.$row[3].'","answers": "'.$row[4].'", "right_answer": '.$row[5].'}';
+            //$pdo = $pdo->prepare("select id from some_table where name = :name");
+           // $pdo->exec($sql);
+            //$row = $pdo->fetch();
+            //var_dump($row);
+            foreach($pdo->query($sql) as $row) {
+                echo '{"status": "Ok", "id":' . $row["id"] . ', "test_id":' . $row["test_id"] . ', "text": "' . $row["text"] . '", "opened": "' . $row["opened"] . '","answers": "' . $row["answers"] . '", "right_answer": ' . $row["right_answer"] . '}';
+            }
         }
         catch(PDOException $e) {
             echo $e->getMessage();

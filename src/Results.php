@@ -1,9 +1,5 @@
 <?php
-
-
-//namespace src;
-//
-
+namespace TLH\Results;
 
 class Results {
 

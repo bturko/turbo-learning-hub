@@ -1,5 +1,5 @@
 <?php
-
+namespace TLH\Notes;
 class Notes {
     /**
      * @return string

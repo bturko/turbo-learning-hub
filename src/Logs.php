@@ -1,6 +1,6 @@
 <?php
 
-//namespace src;
+namespace TLH\Logs;
 
 /**
  * Class Logs
@@ -8,17 +8,20 @@
  */
 class Logs
 {
-    public function v($user_id, $text){
-        $result = mysql_query("SET NAMES 'utf8'; ");
-        $result = mysql_query("INSERT INTO `logs`(`date`, `user_id`, `text`) VALUES (NOW(), $user_id, '$text')");
-        if ($result) {
-
+    public function v($user_id, $text, $pdo){
+        try {
+            $pdo->exec("SET NAMES 'utf8';");
+            $sql="SELECT `login`, `password`, `fio`, `admin`  FROM `users` LIMIT 0, 999; ";
         }
-        else{
-            //echo "Ошибка!";
+        catch(PDOException $e) {
+            echo $e->getMessage();
         }
     }
 
+    /**
+     * @param $message
+     * @param string $type
+     */
     public function showNotification($message, $type="normal"){
         $str="";
         switch($type){

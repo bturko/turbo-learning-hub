@@ -1,13 +1,34 @@
 <?php
-
+namespace TLH\Users;
+/**
+ * Class Users
+ * @package TLH\Users
+ */
 class Users {
+
 
     /**
      *
      */
-    public function getCrenditles(){
-        $result = mysql_query("SET NAMES 'utf8'; ");
-         $result = mysql_query("SELECT `login`, `password`, `fio`, `admin`  FROM `users` LIMIT 0, 999;");
+    public function getCrenditles($pdo){
+        try {
+            $pdo->exec("SET NAMES 'utf8';");
+            $sql="SELECT `login`, `password`, `fio`, `admin`  FROM `users` LIMIT 0, 999; ";
+            $crenditles = "[ ";
+            foreach($pdo->query($sql) as $row){
+                $crenditles .= '{"login": "'.$row['login'].'", "fio": "'.$row['fio'].'", "password": "'.$row['password'].'", "role": "'.$row['admin'].'"},';
+            }
+            $crenditles = substr($crenditles, 0, strlen($crenditles ) - 1);
+            $crenditles .= "]";
+            $res = '{"status": "Ok", "message": "", "crenditles": '.$crenditles.'}';
+        }
+        catch(PDOException $e) {
+            echo $e->getMessage();
+        }
+
+
+         /*   $result = mysql_query("SET NAMES 'utf8'; ");
+        $result = mysql_query("SELECT `login`, `password`, `fio`, `admin`  FROM `users` LIMIT 0, 999;");
         if ($result) {
             $crenditles = "[ ";
             while($row = mysql_fetch_array($result)){
@@ -15,11 +36,12 @@ class Users {
             }
             $crenditles = substr($crenditles, 0, strlen($crenditles ) - 1);
             $crenditles .= "]";
-            echo '{"status": "Ok", "message": "", "crenditles": '.$crenditles.'}';
+            $res = '{"status": "Ok", "message": "", "crenditles": '.$crenditles.'}';
         }
         else{
-            echo '{"status": "error", "message": "sql error"}';
-        }
+            $res = '{"status": "error", "message": "sql error"}';
+        }*/
+        return $res;
     }
 
     /**
@@ -129,16 +151,26 @@ class Users {
         }
     }
 
-    public function getUserByLogin($login, $log)
+    public function getUserByLogin($login, $log, $pdo)
     {
-        //$login = htmlspecialchars($_REQUEST["login"]);
-
         if($login==""){
             echo "Не передан параметр";
         }
         else{
-            $result = mysql_query("SET NAMES 'utf8'; ");
-            $result = mysql_query("SELECT * FROM `users` WHERE `login`='".$login."';");
+            try{
+                $pdo->exec("SET NAMES 'utf8';");
+                $sql="SELECT * FROM `users` WHERE `login`='".$login."';";
+                foreach($pdo->query($sql) as $row){
+                    $res =  '{"status": "success", "login": "'.$row['login'].'", "role": "'.$row['admin'].'", "user_fio": "'.$row['fio'].'", "user_id": "'.$row['id'].'"}';
+                }
+               $log->v($row['id'], "sign in", $pdo);
+            }
+            catch(PDOException $e) {
+                echo $e->getMessage();
+            }
+
+            /*$result = mysql_query("SET NAMES 'utf8'; ");
+            $result = mysql_query(");
             if ($result) {
                 $row = mysql_fetch_array($result);
                 echo '{"status": "success", "login": "'.$row['login'].'", "role": "'.$row['admin'].'", "user_fio": "'.$row['fio'].'", "user_id": "'.$row['id'].'"}';
@@ -146,7 +178,8 @@ class Users {
             }
             else{
                 echo '{"status": "error"}';
-            }
+            }*/
+            return $res;
         }
     }
 } 

@@ -1,8 +1,8 @@
 <?php
-    /*error_reporting(E_ALL);
-    ini_set("display_errors","On");
-*/
-    /* spl_autoload_register ('autoload');
+    error_reporting(E_ALL);
+    ini_set("display_errors","On");/*
+
+     spl_autoload_register ('autoload');
      function autoload ($className) {
          $fileName = $className . '.php';
          include  $fileName;
@@ -15,68 +15,76 @@
     };*/
 
 
-//date_default_timezone_set('America/Los_Angeles');
+    //date_default_timezone_set('America/Los_Angeles');
 
-//$script_tz = date_default_timezone_get();
-/*var_dump($script_tz);
-if (strcmp($script_tz, ini_get('date.timezone'))){
-    echo 'Временная зона скрипта отличается от заданной в INI-файле.';
-} else {
-    echo 'Временные зоны скрипта и настройки INI-файла совпадают.';
-}*/
+    //$script_tz = date_default_timezone_get();
+    /*var_dump($script_tz);
+    if (strcmp($script_tz, ini_get('date.timezone'))){
+        echo 'Временная зона скрипта отличается от заданной в INI-файле.';
+    } else {
+        echo 'Временные зоны скрипта и настройки INI-файла совпадают.';
+    }*/
 
-
+    /*require_once('/usr/local/www/clh.contactis.com.ua/www/src/MySqlConnecting.php');
     require_once('/usr/local/www/clh.contactis.com.ua/www/src/Logs.php');
     require_once('/usr/local/www/clh.contactis.com.ua/www/src/Questions.php');
     require_once('/usr/local/www/clh.contactis.com.ua/www/src/Results.php');
     require_once('/usr/local/www/clh.contactis.com.ua/www/src/Tests.php');
     require_once('/usr/local/www/clh.contactis.com.ua/www/src/Users.php');
     require_once('/usr/local/www/clh.contactis.com.ua/www/src/Projects.php');
-    require_once('/usr/local/www/clh.contactis.com.ua/www/src/Notes.php');
-    require_once('/usr/local/www/clh.contactis.com.ua/www/src/MySqlConnecting.php');
+    require_once('/usr/local/www/clh.contactis.com.ua/www/src/Notes.php');*/
 
-    if ( ! class_exists('Logs')) die('Class Logs not exists!');
-    if ( ! class_exists('Questions')) die('Class Questions not exists!');
+    //if ( ! class_exists('Logs')) die('Class Logs not exists!');
+   // if ( ! class_exists('Questions')) die('Class Questions not exists!');
 
     //echo 'Current PHP version: ' . phpversion();
     //echo getcwd() . "\n";
-     /*use \src\Logs;
-     use \src\Tests;
-     use \src\Questions;
-     use \src\Results;
-     use \src\Users;
-     */
+    include 'vendor/autoload.php';
+     use \TLH\Config\Config;
+     use \TLH\Logs\Logs;
+     use \TLH\MySqlConnecting\MySqlConnecting;
+     use \TLH\Tests\Tests;
+     use \TLH\Questions\Questions;
+     use \TLH\Results\Results;
+     use \TLH\Users\Users;
+     use \TLH\Projects\Projects;
+     use \TLH\Notes\Notes;
 
+    $conf = new Config();
     $log = new Logs();
-    $questions = new Questions();
+    $conn = new MySqlConnecting();
+    //$conn->setConnection($conf);
+    try {
+        $conn->createDbConnection($conf, null);
+        $conn_pdo = $conn->getDBH();
+    } catch (PDOException $e) {
+        echo $log->showNotification( $e->getMessage(), "error" );
+     }
+
+
+
+
+    //$questions = new Questions();
     $test = new Tests();
     $results = new Results();
     $users = new Users();
     $projects = new Projects();
     $notes = new Notes();
-    $conn = new MySqlConnecting();
 
-    $conn->conn();
-    /*try {
-        $conn->connectDB("clh", "clhusr", "kzkzkzkzkz-Zcjkfcevf");
-    } catch (PDOException $e) {
-        //print "Error!: " . $e->getMessage() . "<br/>";
-        echo $log->showNotification( $e->getMessage(), "error" );
-        //die();
-    }*/
+    /**/
 
     //--> TESTS *************************************************************
-    if(isset($_REQUEST["new_test"])){
-       $test->createTest($_REQUEST);
+    if(isset($_REQUEST["createTest"])){
+       $test->createTest($_REQUEST, $conn_pdo);
     }
-    elseif(isset($_REQUEST["get_tests"])){
-        $test->getTestsList( $_REQUEST );
+    elseif(isset($_REQUEST["getTestsList"])){
+        $test->getTestsList( $_REQUEST, $conn_pdo );
     }
     elseif(isset($_REQUEST["remove_test"])){
         $test->removeTest( htmlspecialchars($_REQUEST["removeTestId"]) );
     }
-    elseif(isset($_REQUEST["edit_test"])){
-        $test->updateTest($_REQUEST);
+    elseif(isset($_REQUEST["updateTest"])){
+        $test->updateTest($_REQUEST, $conn_pdo);
     }
     elseif(isset($_REQUEST["get_test_details"])){
         try {
@@ -90,45 +98,30 @@ if (strcmp($script_tz, ini_get('date.timezone'))){
 
 
     //--> QUESTIONS ********************************************************
-    elseif(isset($_REQUEST["get_questions"])){
-        $questions->getTestQuestions($_REQUEST);
+    elseif(isset($_REQUEST["addQuestion"])){
+        $questions = new Questions();
+        $questions->addQuestion($_REQUEST, $conn_pdo);
     }
-    elseif(isset($_REQUEST["get_questions_editing"])){
-        $test_id = htmlspecialchars($_REQUEST["testId"]);
-       if($test_id=="") {$test_id = htmlspecialchars($_REQUEST["testId"]);}
-
-        $questions->getQuestionList($test_id);
+    elseif(isset($_REQUEST["getQuestionsList"])){
+        $questions = new Questions();
+        //$questions->getTestQuestions($_REQUEST);
+        $questions->getQuestionsList($_REQUEST, $conn_pdo);
     }
-    elseif(isset($_REQUEST["new_question"])){
-        $test_id = htmlspecialchars($_REQUEST["test_id"]);
-        $text = htmlspecialchars($_REQUEST["text"]);
-        $opened = htmlspecialchars($_REQUEST["var0"]);
-        $var1 = htmlspecialchars($_REQUEST["var1"]);
-        $var2 = htmlspecialchars($_REQUEST["var2"]);
-        $var3 = htmlspecialchars($_REQUEST["var3"]);
-        $var4 = htmlspecialchars($_REQUEST["var4"]);
-        $rig_var = htmlspecialchars($_REQUEST["rig_var"]);
-
-        if($text=="" || $var1 ==""){
-           echo "Не переданы параметры!";
-        }
-        else{
-           $questions->addQuestion($test_id, $test_id, $text, $opened, $var1, $var2, $var3, $var4, $rig_var);
-        }
+    elseif(isset($_REQUEST["getQuestionsList2"])){
+        $questions = new Questions();
+        $questions->getQuestionsList($_REQUEST, $conn_pdo);
     }
-    elseif(isset($_REQUEST["remove_question"])){
-        $que_id = htmlspecialchars($_REQUEST["que_id"]);
-
-        echo "DELETE FROM `questions` WHERE id = $que_id;";
-        $result = mysql_query("DELETE FROM `questions` WHERE id = $que_id;");
-        if ($result) {
-
-        }
-        else{
-           echo "Ошибка при создании!";
-        }
-        //get_questions_list($test_id);
-        $questions->getQuestionList($test_id);
+    elseif(isset($_REQUEST["removeQuestion"])){
+        $questions = new Questions();
+        $questions->removeQuestion($_REQUEST, $conn_pdo);
+    }
+    elseif(isset($_REQUEST["getQuestionForEditing"])){
+        $questions = new Questions();
+        $questions->getQuestionForEditing( htmlspecialchars($_GET["que_id"]), $conn_pdo );
+    }
+    elseif(isset($_REQUEST["updateQuestion"])){
+        $questions = new Questions();
+        $questions->updateQuestion($_REQUEST, $conn_pdo);
     }
 
 
@@ -145,7 +138,7 @@ if (strcmp($script_tz, ini_get('date.timezone'))){
 
     //--> USERS **********************************************************
     elseif(isset($_REQUEST["get_crenditles"])){
-        echo $users->getCrenditles();
+        echo $users->getCrenditles($conn_pdo);
     }
     elseif(isset($_REQUEST["create_user"])){
         $users->createUser($_REQUEST);
@@ -169,6 +162,7 @@ if (strcmp($script_tz, ini_get('date.timezone'))){
                    //echo $password." ".sha1($password)." ".$row["password"]."<br>";
                    if($row["login"]==$login && $row["password"]==sha1($password) )   {
                        $done = '{"status": "true", "login": "'.$row["login"].'", "fio": "'.$row["fio"].'", "role": '.$row["admin"].', "rnd": '.rand().'}';
+                       $done = '{"status": "true", "login": "'.$row["login"].'", "fio": "'.$row["fio"].'", "role": '.$row["admin"].', "rnd": '.rand().'}';
                    }
                }
                echo $done;
@@ -179,7 +173,7 @@ if (strcmp($script_tz, ini_get('date.timezone'))){
         }===/*/
     }
     elseif(isset($_REQUEST["get_user_by_login"])){
-        $users->getUserByLogin(htmlspecialchars($_REQUEST["login"]), $log);
+        echo $users->getUserByLogin(htmlspecialchars($_REQUEST["login"]), $log, $conn_pdo);
     }
     elseif(isset($_REQUEST["get_users"])){
         $users->getUsersList();
@@ -217,10 +211,10 @@ if (strcmp($script_tz, ini_get('date.timezone'))){
     elseif(isset($_REQUEST["add_note"])){
         $notes->addNote($_REQUEST);
     }
-    elseif(isset($_REQUEST["update_note"])){
+    elseif(isset($_REQUEST["updateNote"])){
         $notes->updateNote($_REQUEST);
     }
-    elseif(isset($_REQUEST["remove_note"])){
+    elseif(isset($_REQUEST["removeNote"])){
         $notes->removeNote($_REQUEST);
     }
     elseif(isset($_REQUEST["getNoteDetails"])){
@@ -230,31 +224,12 @@ if (strcmp($script_tz, ini_get('date.timezone'))){
         $notes->getNotesList( htmlspecialchars($_REQUEST["user_role"]) );
     }
 
+
     //--> CONFIG **********************************************************************
     elseif(isset($_REQUEST["check_existing_db"])){
-        $result = mysql_query("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME =  'clh'");
-        if ($result) {
-          if(mysql_num_rows($result) > 0){
-              echo "Ok";
-          }
-           else{
-               echo "No";
-           }
-        }
-        else{
-           echo "Ошибка!";
-        }
-    }
-    elseif(isset($_REQUEST["get_que_details"])){
-       $questions->getQuestionDetails( htmlspecialchars($_GET["que_id"]) );
-    }
-    elseif(isset($_REQUEST["question_update"])){
-       $questions->updateQuestion($_REQUEST);
+        $conn->checkDBConnection('tlh', $conf);
     }
 
-    elseif(isset($_REQUEST["set_testresult"])){
-        $results->setTestResult($_REQUEST);
-    }
 
 
     //--> RESULTS *******************************************
@@ -268,7 +243,9 @@ if (strcmp($script_tz, ini_get('date.timezone'))){
         $password = "admin";
         echo sha1($password);
     }
-
+    elseif(isset($_REQUEST["set_testresult"])){
+        $results->setTestResult($_REQUEST);
+    }
 
 
 

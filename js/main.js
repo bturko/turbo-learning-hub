@@ -258,7 +258,7 @@
         });
 
         $("#edit_note_btn").click(function(){
-            kbaseVM.edit_note( $("#editNoteTitle").val(), $("#editNoteContent").val(), "kbase_blk" )
+            kbaseVM.editNote( $("#editNoteTitle").val(), $("#editNoteContent").val(), "kbase_blk" )
             spa.hide_dialog("modal-edit-note");
             var a = 1000 + kbaseVM.cur_viewed_note;
             spa.change_uri("questions/"+a);
@@ -812,6 +812,6 @@ function edit_que(que_id){
 
 
 function redir_url(){
-    window.location.replace("main.php#notes/1/15");
+    //window.location.replace("main.php#notes/1/15");
 }
 
