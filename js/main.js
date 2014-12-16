@@ -258,7 +258,7 @@
         });
 
         $("#edit_note_btn").click(function(){
-            kbaseVM.editNote( $("#editNoteTitle").val(), $("#editNoteContent").val(), "kbase_blk" )
+            kbaseVM.updateNote( $("#editNoteTitle").val(), $("#editNoteContent").val(), "kbase_blk" )
             spa.hide_dialog("modal-edit-note");
             var a = 1000 + kbaseVM.cur_viewed_note;
             spa.change_uri("questions/"+a);
@@ -344,7 +344,7 @@
             var req = kbaseVM.removeNote();
             req.success(function(response){
                 var json = JSON.parse(response);
-                if(json.status == "success"){
+                if(json.status == "Ok"){
                     logVM.informer("Запись была удалена!")
                     spa.hide_dialog("modal-remove-note");
                     setTimeout(function(){
@@ -356,8 +356,8 @@
                 }
             });
             spa.hide_dialog("modal-remove-note");
-            //spa.change_uri("kbase/");
-            location.reload("#kbase");
+
+            //location.reload("#kbase");
         });
 
         $("#note_remove_cancel").click(function(){
@@ -436,7 +436,7 @@
         });
 
         $("#edit_project_btn").click(function(){
-            projectsVM.editProject( $("#editProjectTitle").val(), $("#editProjectDescription").val(), "projects_blk" )
+            projectsVM.updateProject( $("#editProjectTitle").val(), $("#editProjectDescription").val(), "projects_blk" )
             spa.hide_dialog("modal-edit-project");
             spa.change_uri("kbase")
         });
@@ -501,11 +501,11 @@
 
 
     function watch_test(test_id){
-
+//alert(123);
         questionVM.test_id = test_id;
-        var req = questionVM.getQuestionForEditing(test_id);
+        var req = questionVM.getTestQuestions(test_id);
         req.success(function( response ){
-         $("#sh_newquestion").click(function(){
+        $("#sh_newquestion").click(function(){
              $("#newQueText").val("");
              $("#var0").attr('checked', false);
              $("#new_cb_toggle_blk").show();
@@ -515,9 +515,7 @@
              $("#var4").val("");
              $("#rig_var :nth-child(1)").attr("selected", "selected");
              spa.show_dialog("modal-new-que");
-        }); //TODO UNUSED FUNCTION?
-
-
+        });
 
         var json = JSON.parse(response);
         if(json.title=="you are answered"){
@@ -550,7 +548,7 @@
             }
             $("#que_blk").html(html);
             spa.show_popup('watch_test_popup');
-
+//alert(8787)
             }
             
         });

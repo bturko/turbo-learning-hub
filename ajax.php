@@ -1,18 +1,18 @@
-<?php
-    error_reporting(E_ALL);
-    ini_set("display_errors","On");/*
+<?php /*
+error_reporting(E_ALL);
+ini_set("display_errors","On");
 
-     spl_autoload_register ('autoload');
-     function autoload ($className) {
-         $fileName = $className . '.php';
-         include  $fileName;
-     }
-    function my_autoload($class){
-        $file = __DIR__.'/class/' . $class . '.class.php';
-        if(file_exists($file)) {
-           include $file;
-        }
-    };*/
+ spl_autoload_register ('autoload');
+ function autoload ($className) {
+     $fileName = $className . '.php';
+     include  $fileName;
+ }
+function my_autoload($class){
+    $file = __DIR__.'/class/' . $class . '.class.php';
+    if(file_exists($file)) {
+       include $file;
+    }
+};*/
 
 
     //date_default_timezone_set('America/Los_Angeles');
@@ -37,8 +37,6 @@
     //if ( ! class_exists('Logs')) die('Class Logs not exists!');
    // if ( ! class_exists('Questions')) die('Class Questions not exists!');
 
-    //echo 'Current PHP version: ' . phpversion();
-    //echo getcwd() . "\n";
     include 'vendor/autoload.php';
      use \TLH\Config\Config;
      use \TLH\Logs\Logs;
@@ -68,10 +66,9 @@
     $test = new Tests();
     $results = new Results();
     $users = new Users();
-    $projects = new Projects();
-    $notes = new Notes();
+    //$projects = new Projects();
+    //$notes = new Notes();
 
-    /**/
 
     //--> TESTS *************************************************************
     if(isset($_REQUEST["createTest"])){
@@ -81,14 +78,14 @@
         $test->getTestsList( $_REQUEST, $conn_pdo );
     }
     elseif(isset($_REQUEST["remove_test"])){
-        $test->removeTest( htmlspecialchars($_REQUEST["removeTestId"]) );
+        $test->removeTest( htmlspecialchars($_REQUEST["removeTestId"]), $conn_pdo);
     }
     elseif(isset($_REQUEST["updateTest"])){
         $test->updateTest($_REQUEST, $conn_pdo);
     }
     elseif(isset($_REQUEST["get_test_details"])){
         try {
-            $test->getTestDetails( htmlspecialchars($_GET["testId"]) );
+            $test->getTestDetails( htmlspecialchars($_GET["testId"]), $conn_pdo );
         } catch (Exception $e) {
             echo 'Выброшено исключение: ',  $e->getMessage(), "\n";
         }
@@ -102,12 +99,11 @@
         $questions = new Questions();
         $questions->addQuestion($_REQUEST, $conn_pdo);
     }
-    elseif(isset($_REQUEST["getQuestionsList"])){
+    elseif(isset($_REQUEST["getTestQuestions"])){
         $questions = new Questions();
-        //$questions->getTestQuestions($_REQUEST);
-        $questions->getQuestionsList($_REQUEST, $conn_pdo);
+        echo $questions->getTestQuestions($_REQUEST, $conn_pdo);
     }
-    elseif(isset($_REQUEST["getQuestionsList2"])){
+    elseif(isset($_REQUEST["getQuestionsList"])){
         $questions = new Questions();
         $questions->getQuestionsList($_REQUEST, $conn_pdo);
     }
@@ -127,10 +123,12 @@
 
     //--> RESULTS *********************************************************
     elseif(isset($_REQUEST["get_results"])){
-        $results->getResults($_REQUEST);
+        //if(is_null($_REQUEST["test_id"])) {$_REQUEST["test_id"]="1";}
+        //if(is_null($_REQUEST["operator_id"])) {$_REQUEST["operator_id"]="1";}
+        $results->getResults($_REQUEST, $conn_pdo);
     }
     elseif(isset($_REQUEST["get_diagram"])){
-        echo $results->getDiagramData($_REQUEST);
+        echo $results->getDiagramData($_REQUEST, $conn_pdo);
     }
 
 
@@ -141,7 +139,7 @@
         echo $users->getCrenditles($conn_pdo);
     }
     elseif(isset($_REQUEST["create_user"])){
-        $users->createUser($_REQUEST);
+        echo $users->createUser($_REQUEST, $conn_pdo);
     }
     elseif(isset($_REQUEST["check_user"])){
         /*/===$login = htmlspecialchars($_POST["login"]);
@@ -176,51 +174,61 @@
         echo $users->getUserByLogin(htmlspecialchars($_REQUEST["login"]), $log, $conn_pdo);
     }
     elseif(isset($_REQUEST["get_users"])){
-        $users->getUsersList();
+        echo $users->getUsersList($conn_pdo);
     }
-    elseif(isset($_REQUEST["get_user"])){
-        $users->getUser( htmlspecialchars($_REQUEST["user_id"]) );
+    elseif(isset($_REQUEST["getUserDetails"])){
+        echo $users->getUserDetails( htmlspecialchars($_REQUEST["user_id"]), $conn_pdo );
     }
     elseif(isset($_REQUEST["update_user"])){
-        echo $users->updateUser($_REQUEST);
+        echo $users->updateUser($_REQUEST, $conn_pdo);
     }
     elseif(isset($_REQUEST["remove_user"])){
-        echo $users->removeUser( htmlspecialchars($_REQUEST['result_id']) );
+        echo $users->removeUser( htmlspecialchars($_REQUEST['user_id']), $conn_pdo );
     }
 
 
     //--> PROJECTS *********************************************************************
     elseif(isset($_REQUEST["createProject"])){
-        $projects->createProject($_REQUEST);
+        $projects = new Projects();
+        $projects->createProject($_REQUEST, $conn_pdo);
     }
     elseif(isset($_REQUEST["updateProject"])){
-        $projects->updateProject($_REQUEST);
+        $projects = new Projects();
+        echo $projects->updateProject($_REQUEST, $conn_pdo);
     }
     elseif(isset($_REQUEST["removeProject"])){
-        $projects->removeProject($_REQUEST);
+        $projects = new Projects();
+        $projects->removeProject($_REQUEST, $conn_pdo);
     }
     elseif(isset($_REQUEST["getProjectDetails"])){
-        echo $projects->getProjectDetails( htmlspecialchars($_REQUEST["project_id"]) );
+        $projects = new Projects();
+        echo $projects->getProjectDetails( htmlspecialchars($_REQUEST["project_id"]), $conn_pdo  );
     }
     elseif(isset($_REQUEST["getProjectsList"])){
-        $projects->getProjectsList( htmlspecialchars($_REQUEST["user_role"]) );
+        $projects = new Projects();
+        echo $projects->getProjectsList( htmlspecialchars($_REQUEST["user_role"]), $conn_pdo );
     }
 
 
     //--> NOTES *********************************************************************
     elseif(isset($_REQUEST["add_note"])){
-        $notes->addNote($_REQUEST);
+        $notes = new Notes();
+        $notes->addNote($_REQUEST, $conn_pdo);
     }
     elseif(isset($_REQUEST["updateNote"])){
-        $notes->updateNote($_REQUEST);
+        $notes = new Notes();
+        echo $notes->updateNote($_REQUEST, $conn_pdo);
     }
     elseif(isset($_REQUEST["removeNote"])){
-        $notes->removeNote($_REQUEST);
+        $notes = new Notes();
+        echo $notes->removeNote($_REQUEST, $conn_pdo);
     }
     elseif(isset($_REQUEST["getNoteDetails"])){
-        echo $notes->getNoteDetails( htmlspecialchars($_REQUEST["note_id"]) );
+        $notes = new Notes();
+        echo $notes->getNoteDetails( htmlspecialchars($_REQUEST["note_id"]), $conn_pdo );
     }
     elseif(isset($_REQUEST["getNotesList"])){
+        $notes = new Notes();
         $notes->getNotesList( htmlspecialchars($_REQUEST["user_role"]) );
     }
 
@@ -234,7 +242,7 @@
 
     //--> RESULTS *******************************************
     elseif(isset($_REQUEST["remove_result"])){
-        $results->removeResult($_REQUEST["result_id"]);
+        echo $results->removeResult($_REQUEST["result_id"], $conn_pdo);
     }
     elseif(isset($_REQUEST["export_results"])){
         $results->exportExcel();
@@ -244,7 +252,7 @@
         echo sha1($password);
     }
     elseif(isset($_REQUEST["set_testresult"])){
-        $results->setTestResult($_REQUEST);
+        $results->setTestResult($_REQUEST, $conn_pdo);
     }
 
 

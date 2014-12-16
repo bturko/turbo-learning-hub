@@ -85,7 +85,7 @@ function User() {
     self.get_user = function(user_id){
         self.user_id = user_id;
         $.ajax({
-            url: "ajax.php?get_user",
+            url: "ajax.php?getUserDetails",
             method: "post",
             data: {user_id: user_id}
         })
@@ -114,6 +114,11 @@ function User() {
             data: {user_id: self.user_id, login: login, password: password, fio: fio}
         })
             .success(function(response){
+                req = userVM.get_users();
+                req.success(function(result1){
+                    $('#users2').html(result1);
+                });
+
                 return response;
             })
             .fail(function(response){
@@ -129,10 +134,9 @@ function User() {
         })
             .success(function(response){
                 var json = JSON.parse(response);
-                //console.log(json);
-                //alert(json.status)
-                if(json.status == "removed") {
+                 if(json.status == "removed") {
                     logVM.informer("Пользователь удален!")
+                     spa.hide_dialog("modal-remove-user")
                     req = self.get_users();
                         req.success(function(result1){
                             $('#users2').html(result1);

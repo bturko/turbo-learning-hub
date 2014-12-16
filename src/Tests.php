@@ -36,6 +36,7 @@ class Tests
 
     /**
      * @param $_REQUESTs
+     * @param $pdo
      */
     public function getTestsList($_REQUESTs, $pdo){
         $user_role = htmlspecialchars($_REQUESTs["user_role"]);
@@ -121,18 +122,23 @@ class Tests
 
     /**
      * @param $test_id
+     * @param $pdo
      */
-    public function removeTest($test_id){
+    public function removeTest($test_id, $pdo){
         if($test_id==""){
             echo "Не передан параметр!";
         }
         else{
-            $result = mysql_query("DELETE FROM `tests` WHERE id = ".$test_id."; ");
+            $sql = "DELETE FROM `tests` WHERE id =  :testID";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':testID', $test_id, $pdo::PARAM_INT);
+            $stmt->execute();
+            /*$result = mysql_query("DELETE FROM `tests` WHERE id = ".$test_id."; ");
             if ($result) {
             }
             else{
                 echo "Ошибка при удалении!";
-            }
+            }*/
         }
     }
 
@@ -161,22 +167,24 @@ class Tests
 
     /**
      * @param $test_id
+     * @param $pdo
      * @throws InvalidArgumentException
      */
-    public function getTestDetails($test_id){
+    public function getTestDetails($test_id, $pdo){
 
         if($test_id < 1){
             throw new InvalidArgumentException('Попытка получить несуществующий тест!');
           }
         else{
-            $result = mysql_query("SET NAMES 'utf8'; ");
-            $result = mysql_query("SELECT * FROM `tests` WHERE id = ".$test_id."; ");
-            if ($result) {
-                $row = mysql_fetch_array($result);
-                echo '{"title": "'.$row["title"].'", "description": "'.$row["description"].'"}';
+            $sql = "SELECT * FROM `tests` WHERE id = ".$test_id."; ";
+            try {
+                $pdo->exec("SET NAMES 'utf8';");
+                foreach($pdo->query($sql) as $row) {
+                    echo '{"title": "' . $row["title"] . '", "description": "' . $row["description"] . '"}';
+                }
             }
-            else{
-                echo '{"title": "[Ошибка!!!]", "description": ""}';
+            catch(PDOException $e) {
+                echo $e->getMessage();
             }
         }
 

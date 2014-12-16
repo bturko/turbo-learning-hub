@@ -56,9 +56,7 @@ function Project() {
             });
         //spa.show_dialog("modal-edit-note");
     }
-    self.editProject = function(title, description, elm_id){
-        //var txt = $("#editNoteContent").val();
-       // if(txt=="") txt = editNC.get_html();
+    self.updateProject = function(title, description, elm_id){
 
         $.ajax({
             url: "ajax.php?updateProject",
@@ -73,9 +71,6 @@ function Project() {
             .success(function(response){
                 var json = JSON.parse(response);
                 if(json.status=="Ok"){
-                    //$("#"+elm_id).html(result);
-                    //console.log("updateProject suc")
-
                     self.getProjectsList("projects_blk");
                 }
                 else{
@@ -83,7 +78,7 @@ function Project() {
                 }
             })
             .fail(function(response){
-               // $("#editProjectTitle").val("Ошибка!");
+
             });
     }
     self.removeProject = function(){

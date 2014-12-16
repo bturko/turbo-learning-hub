@@ -40,7 +40,7 @@
                 <div class="col-lg-12">
                     <div class="row" >
                         <ul class="nav nav-pills" data-bind="foreach:views">
-                            <li data-bind="css: {active: $root.currentView() == name}" style="display:block">
+                            <li data-bind="css: {active: $root.currentView() == name}">
                                 <a data-bind="text: title, attr:{href:'#' + name}"></a>
                             </li>
                         </ul>
@@ -56,12 +56,12 @@
                         <!-- HOME -->
                          <script type="text/html" id="home">
                             <div>
-                            <h2></h2>    
-                            <div class="hi-icon-wrap hi-icon-effect-8" id="btns">
+                                <h2></h2>
+                                <div class="hi-icon-wrap hi-icon-effect-8" id="btns">
                                     <table>
                                         <tr>
                                             <td>
-                                                <a href="#tests1" title="Тесты" class="hi-icon hi-icon-1" > </a>
+                                                <a href="#tests" title="Тесты" class="hi-icon hi-icon-1" > </a>
                                             </td>
                                             <td>
                                                 <a href="#kbase" title="База знаний" class="hi-icon hi-icon-2" > </a>
@@ -90,19 +90,15 @@
 
 
                         <!-- TESTS -->
-                        <script type="text/html" id="tests1">
+                        <script type="text/html" id="tests">
                             <div>
-                            <section id="set-8">
-                                <div title="Тесты" class="hi-icon hi-icon-1"> </div><span style="font-size: 32pt; color: white">Тесты</span>
-                            </section>
-                             <div id='test_messages'></div>
-                            
-
-                                <a href="#home" class="btn btn-info"><span class="glyphicon glyphicon-chevron-left"></span> Назад</a>
-                                <a id="btnNewtask" href="#" class="btn btn-danger"><span class="glyphicon glyphicon-file role1"></span> Новый тест</a>
-
-                                <!--<button type="button" class="btn btn-primary btn-xs"><a href="#home">&laquo; Назад</a></button>-->
-                            <div id='tests'></div>
+                                <section id="set-8">
+                                    <div title="Тесты" class="hi-icon hi-icon-1"> </div><span style="font-size: 32pt; color: white">Тесты</span>
+                                </section>
+                                 <div id='test_messages'></div>
+                                 <a href="#home" class="btn btn-info"><span class="glyphicon glyphicon-chevron-left"></span> Назад</a>
+                                 <a id="btnNewtask" href="#" class="btn btn-danger"><span class="glyphicon glyphicon-file role1"></span> Новый тест</a>
+                                 <div id='tests_blk'></div>
                             </div>
                         </script>
                         <!-- /TESTS -->
@@ -132,7 +128,7 @@
                              <div id='test_messages'></div>
 
                                 <a href="#home" class="btn btn-info"><span class="glyphicon glyphicon-chevron-left"></span> Назад</a>
-                                <a id="new_project" href="#" class="btn btn-danger"><span class="glyphicon glyphicon-paperclip role1"></span> Добавить проект</a>
+                                <a id="new_project" href="#" class="btn btn-danger role1"><span class="glyphicon glyphicon-paperclip"></span> Добавить проект</a>
 
                             <div id="projects_blk"></div>
 
@@ -140,22 +136,7 @@
                         </script>
                         <!-- /KBASE PROJECTS -->
 
-                        <!-- KBASE NOTES
-                        <script type="text/html" id="notes">
-                            <div>
-                                <section id="set-8">
-                                    <div title="База знаний" class="hi-icon hi-icon-2"> </div><span style="font-size: 32pt; color: white">Заметка</span>
-                                </section>
-                                <div id='test_messages'></div>
 
-                                <a href="main.php#kbase" class="btn btn-info"><span class="glyphicon glyphicon-chevron-left"></span> Назад</a>
-                                <a id="edit_note" href="#" class="btn btn-danger"><span class="glyphicon glyphicon-pencil role1"></span> Редактировать заметку</a>
-                                <a id="edit_note" href="#" class="btn btn-danger"><span class="glyphicon glyphicon-remove role1"></span> Удалить заметку</a>
-
-                                <div id="kbase_blk"></div>
-                            </div>
-                        </script>
-                        /KBASE NOTES -->
 
                         <!-- USERS -->
                         <script type="text/html" id="users">
@@ -164,6 +145,11 @@
                                     <div title="Пользователи" class="hi-icon hi-icon-2"> </div><span style="font-size: 32pt; color: white">Пользователи</span>
                                 </section>
                             </div>
+                            <a href="#home" class="btn btn-info"><span class="glyphicon glyphicon-chevron-left"></span> Назад</a>
+                            <a href="#" class="btn btn-primary" onclick="userVM.get_users();"><span class="glyphicon glyphicon-refresh"></span> Обновить</a>
+                            <!--<a id="sh_newuser" class="btn btn-danger role1"><span class="glyphicon glyphicon-plus "></span> Добавить</a>-->
+
+
                             <div id="users2"></div>
                         </script>
                         <!-- /USERS -->
@@ -176,7 +162,6 @@
                                 <div title="Результаты" class="hi-icon hi-icon-2"> </div><span style="font-size: 32pt; color: white">Результаты</span>
                             </section>
                              <div id='test_messages'></div>
-                            
                           
                             <div id="results_blk"></div>
                             
@@ -216,29 +201,28 @@
                             </div>
 
                             <a href="main.php#kbase" class="btn btn-info"><span class="glyphicon glyphicon-chevron-left"></span> Назад</a>
-                            <a onclick='spa.show_dialog("modal-edit-note"); kbaseVM.getNoteDetails(kbaseVM.cur_viewed_note, false);' class="btn btn-danger"><span class="glyphicon glyphicon-pencil role1"></span> Редактировать заметку</a>
-                            <a id="edit_note" href="#" class="btn btn-danger"><span class="glyphicon glyphicon-remove role1"></span> Удалить заметку</a>
+                            <a onclick='spa.show_dialog("modal-edit-note"); kbaseVM.getNoteDetails(kbaseVM.cur_viewed_note, false);' class="btn btn-danger role1"><span class="glyphicon glyphicon-pencil"></span> Редактировать заметку</a>
+                            <a onclick='spa.show_dialog("modal-remove-note");' href="#" class="btn btn-danger role1"><span class="glyphicon glyphicon-remove"></span> Удалить заметку</a>
 
                             <div id="kbase_blk"></div>
                         </script>
 
 
+                        <!-- KBASE QUESTIONS -->
                         <script type="text/html" id="questions">
                             <div>
-                                <h2>Вопросы</h2>
+                                <section id="set-8">
+                                    <div title="" class="hi-icon hi-icon-4"> </div><span style="font-size: 32pt; color: white">Вопросы</span>
+                                </section>
 
-                                <a href="#tests1" class="btn btn-info"><span class="glyphicon glyphicon-chevron-left"></span> Назад</a>
-                                <a href="#" class="btn btn-primary" onclick="questionVM.get_questions(questionVM.cur_edit_que);"><span class="glyphicon glyphicon-refresh"></span> Обновить</a>
-                                <a id="sh_newquestion" href="#" class="btn btn-danger"><span class="glyphicon glyphicon-question-sign role1"></span> Добавить вопрос</a>
+                                <a href="#tests" class="btn btn-info"><span class="glyphicon glyphicon-chevron-left"></span> Назад</a>
+                                <a href="#" class="btn btn-primary" onclick="questionVM.getQuestionsList(questionVM.cur_edit_que);"><span class="glyphicon glyphicon-refresh"></span> Обновить</a>
+                                <a id="sh_newquestion" class="btn btn-danger role1"><span class="glyphicon glyphicon-plus "></span> Добавить вопрос</a>
 
-                                <!--<button id="sh_newquestion" style="margin: 3px;">Новый вопрос</button>
-                                <button type="button" class="btn btn-primary btn-xs"><a href="#tests1">&laquo; Назад</a></button><br>-->
-                                <div id="q_blk_content">
-
-                                </div>
+                                 <div id="q_blk_content"></div>
                             </div>
                         </script>
-
+                        <!-- /KBASE QUESTIONS -->
 
 
 
@@ -292,7 +276,10 @@
 
         <div class="md-modal md-effect-9" id="modal-new-test">
             <div class="md-content">
-                <h3>Новый тест<br></h3><div class="new_test_err">Введите название!</div>
+                <h3>Новый тест<br></h3>
+                <!--<div class="new_test_err">Введите название!</div>-->
+                <div class="new_test_err alert alert-warning" style="width: 80%;margin: 0px 10%; padding: 10px;"><span class="glyphicon glyphicon-exclamation-sign"></span>Введите название!</div>
+
                 <div>
                     <form class="form-horizontal"  >
                         <div class="form-group">
@@ -329,7 +316,8 @@
                 <div>
                     <form class="form-horizontal"  >
                         <div class="form-group" >
-                            <label for="inputEmail3" class="col-sm-12 control-label" style="text-align: center;">Вы действительно хотите удалить тест?</label>
+                            <div class="alert alert-warning" style="width: 80%;margin: 0px 10%; padding: 10px;"><span class="glyphicon glyphicon-question-sign"></span> Вы действительно хотите удалить тест?</div>
+                            <!--       <label for="inputEmail3" class="col-sm-12 control-label" style="text-align: center;">Вы действительно хотите удалить тест?</label>-->
                         </div>
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10 row">
@@ -369,10 +357,12 @@
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10 row">
                                 <div class="col-xs-4">
-                                    <button id="test_edit_btn" type="submit" class="btn btn-primary" >Сохранить</button>
+                                    <!--<button id="test_edit_btn" type="submit" class="btn btn-primary" >Сохранить</button>-->
+                                    <a id="test_edit_btn" href="#" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span> Сохранить</a>
                                 </div>
                                 <div class="col-xs-4">
-                                    <button id="test_edit_cancel" type="submit" class="btn btn-default" >Отмена</button>
+                                    <!--<button id="test_edit_cancel" type="submit" class="btn btn-default" >Отмена</button>-->
+                                    <a id="test_edit_cancel" href="#" class="btn btn-warning"><span class="glyphicon glyphicon-remove"></span> Отмена</a>
                                 </div>
                             </div>
                         </div>
@@ -383,7 +373,9 @@
 
         <div class="md-modal" id="modal-new-que">
             <div class="md-content">
-                <h3>Новый вопрос<br></h3><div class="new_que_err">Заполните поле вопрос и хотя бы 1й вариант ответа!</div>
+                <h3>Новый вопрос<br></h3>
+                <div class="new_que_err alert alert-warning" style="width: 80%;margin: 0px 10%; padding: 10px;"><span class="glyphicon glyphicon-question-sign"></span> Заполните поле вопрос и хотя бы 1й вариант ответа!</div>
+                <!--<div class="new_que_err">Заполните поле вопрос и хотя бы 1й вариант ответа!</div>-->
                 <div>
                     <form class="form-horizontal" >
                         <div class="form-group">
@@ -513,11 +505,9 @@
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10 row">
                                 <div class="col-xs-4">
-                                    <!--<button id="que_edit_btn" type="submit" class="btn btn-primary" >Изменить</button>-->
                                     <a id="que_edit_btn" href="#" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span> Изменить</a>
                                 </div>
                                 <div class="col-xs-4">
-                                    <!--<button id="que_edit_cancel" type="submit" class="btn btn-default" >Отмена</button>-->
                                     <a id="que_edit_cancel" href="#" class="btn btn-warning"><span class="glyphicon glyphicon-remove"></span> Отмена</a>
                                 </div>
                             </div>
@@ -623,12 +613,10 @@
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10 row">
                             <div class="col-xs-4">
-                                <!--<button id="edit_note_btn" type="submit" class="btn btn-primary" >Изменить</button>-->
                                 <a id="edit_note_btn" href="#" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span> Изменить</a>
                             </div>
                             <div class="col-xs-4">
-                                <!--<button id="edit_note_cancel" type="submit" class="btn btn-default" >Отмена</button>-->
-                                <a id="edit_note_cancel" href="#" class="btn btn-warning"><span class="glyphicon glyphicon-remove"></span> Отмена</a>
+                               <a id="edit_note_cancel" href="#" class="btn btn-warning"><span class="glyphicon glyphicon-remove"></span> Отмена</a>
                             </div>
                         </div>
                     </div>
@@ -644,7 +632,8 @@
             <div>
                 <form class="form-horizontal"  >
                     <div class="form-group" >
-                        <label for="inputEmail3" class="col-sm-12 control-label" style="text-align: center;">Вы действительно хотите удалить запись в Базе Знаний?</label>
+                        <div class="alert alert-success"><span class="glyphicon glyphicon-question-sign"></span> Вы действительно хотите удалить запись в Базе Знаний?</div>
+                        <!--<label for="inputEmail3" class="col-sm-12 control-label" style="text-align: center;">Вы действительно хотите удалить запись в Базе Знаний?</label>-->
                     </div>
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10 row">
@@ -914,7 +903,6 @@
                       alert(this.params['name'])
                       kbaseVM.cur_viewed_note = this.params['id'];
                       vm.currentView("notes");
-                        //get_questions_editing(questionVM.cur_edit_que);
                       //req = kbaseVM.getNoteDetails(kbaseVM.cur_viewed_note, true);
 
                   });*/
@@ -930,6 +918,11 @@
                           req.success(function(result1){
                               $('#kbase_blk').html(result1);
                           });
+                          setTimeout(function(){
+                              if(userVM.role < 1){
+                                  $(".role1").hide();
+                              }
+                          }, 300);
                       }
                       else{
                           vm.currentView("questions");
@@ -950,7 +943,7 @@
                if(userVM.role > 0){
                    vm.views = [
                        {name: "home", title: "Главная"},
-                       {name: "tests1", title: "Тесты"},
+                       {name: "tests", title: "Тесты"},
                        {name: "kbase", title: "База знаний"},
                        {name: "users", title: "Пользователи"},
                        {name: "results", title: "Результаты"},
@@ -961,7 +954,7 @@
                else{
                    vm.views = [
                        {name: "home", title: "Главная"},
-                       {name: "tests1", title: "Тесты"},
+                       {name: "tests", title: "Тесты"},
                        {name: "kbase", title: "База знаний"},
                        {name: "profile", title: "Профиль"},
                        {name: "exit", title: "Выход"}
@@ -977,9 +970,6 @@
                     case "home":                        
                         /*$("#btnNewtask").click(function(){
                            spa.show_dialog("modal-new-test");
-                        });
-                        $("#sh_newquestion").click(function(){
-                            spa.show_dialog("modal-new-que");
                         });
                         $("#new_note").click(function(){
                             spa.show_dialog("modal-new-note");
@@ -998,16 +988,16 @@
                             }
                         }, 100);
                         break;
-                     case "tests1":
-                         testVM.get_tests("tests", userVM.role);
+                     case "tests":
+                         testVM.getTestsList("tests_blk", userVM.role);
                          setTimeout(function(){
                              if(userVM.role < 1){
                                  $(".role1").hide();
                                  $("#new_note").hide();
                                  $("#btnNewtask").hide();
-                                 //console.log(userVM.role,newValue)
+                               }
 
-                             }
+
                          }, 50);
 
                          break;
@@ -1039,7 +1029,20 @@
                               });
                          break;
                      case "questions":
-                         alert(baseVM.cur_viewed_note)
+                       //  alert(kbaseVM.cur_viewed_note)
+                         $("#sh_newquestion").click(function(){
+                             alert(23)
+                             $("#newQueText").val("");
+                             $("#var0").attr('checked', false);
+                             $("#new_cb_toggle_blk").show();
+                             $("#var1").val("");
+                             $("#var2").val("");
+                             $("#var3").val("");
+                             $("#var4").val("");
+                             $("#rig_var :nth-child(1)").attr("selected", "selected");
+                             spa.show_dialog("modal-new-que");
+                         });
+
                         if(kbaseVM.cur_viewed_note > 0){
                             req = kbaseVM.getNoteDetails(kbaseVM.cur_viewed_note);
                             req.success(function(result1){

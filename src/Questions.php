@@ -101,17 +101,6 @@ class Questions
         catch(PDOException $e) {
             echo $e->getMessage();
         }
-
-
-        /*$result = mysql_query("SET NAMES 'utf8'; ");
-        $result = mysql_query();
-        if ($result) {
-            $row = mysql_fetch_row($result);
-            echo '{"status": "Ok", "id":'.$row[0].', "test_id":'.$row[1].', "text": "'.$row[2].'", "opened": "'.$row[3].'","answers": "'.$row[4].'", "right_answer": '.$row[5].'}';
-        }
-        else{
-            echo '{"status": "Error"}';
-        }*/
     }
 
     /**
@@ -168,41 +157,92 @@ class Questions
         }
    }
 
-
-    public function getTestQuestions($_REQUESTs){
-        $test_id = htmlspecialchars($_REQUESTs["testId"]);
+    /**
+     * @param $_REQUESTs
+     */
+    public function getTestQuestions($_REQUESTs, $pdo){
+        $test_id = htmlspecialchars($_REQUESTs["test_id"]);
         $login = htmlspecialchars($_REQUESTs["login"]);
 
         if($login=="" || $test_id < 1){
-            echo '{"title": "no_params", "description": "", "cnt": 0, "answers": [{}] }';
+            $res = '{"title": "no_params", "description": "", "cnt": 0, "answers": [{}] }';
         }
         else{
-            $result = mysql_query("SET NAMES 'utf8'; ");
+            try {
+                $pdo->exec("SET NAMES 'utf8';");
+                //$sql = "SELECT id FROM `results` WHERE login = '".$login."' AND test_id = ".$test_id."; ";
+
+                $sql="SELECT count(*) FROM `results` WHERE login = '".$login."' AND test_id = ".$test_id.";";
+                $result = $pdo->query($sql);
+                $row3 = $result->fetch($pdo::FETCH_NUM);
+                //echo $row3[0];
+
+                //$cnt = $pdo->query($sql)->fetchColumn();
+                if($row3[0] > 0) {
+                    $res = '{"title": "you are answered", "description": "", "cnt": 0, "answers": [{}] }';
+                }
+                else{
+$res='';
+
+
+                    $sql="SELECT count(*) FROM `questions` WHERE test_id = ".$test_id."; ";
+                    $result = $pdo->query($sql);
+                    $row4 = $result->fetch($pdo::FETCH_NUM);
+
+
+
+                    //$result0 = mysql_query("SELECT * FROM `tests` WHERE id = ".$test_id.";  ");
+                    $sql = "SELECT * FROM `tests` WHERE id = ".$test_id."; ";
+                    //$cnt = $pdo->query($sql)->fetchColumn() ;
+                    foreach($pdo->query($sql) as $row0) {
+
+                        $res = '{"title": "'.$row0["title"].'", "description": "'.$row0["description"].'", "cnt": "'.$row4[0].'", "questions":[';
+
+                    }
+                    $i = 0;
+
+                    $sql = "SELECT `id`, `test_id`, `text`, `opened`, `answers`, `right_answer` FROM `questions` WHERE test_id = ".$test_id."; ";
+
+                    $cnt=$pdo->query($sql)->fetchColumn();
+                    //$res .="eeeeeeeeeeeeeeeeeeeeeeeee=".$cnt;
+                    //$result = mysql_query("SELECT `id`, `test_id`, `text`, `opened`, `answers`, `right_answer` FROM `questions` WHERE test_id = ".$test_id."; ");
+                    $sql = "SELECT `id`, `test_id`, `text`, `opened`, `answers`, `right_answer` FROM `questions` WHERE test_id = ".$test_id."; ";
+                    foreach($pdo->query($sql) as $row) {
+                        $i++;
+                        $res .= '{"text": "'.$row["text"].'", "opened": "'.$row["opened"].'", "answers": "'.$row["answers"].'", "right_answer": '.$row["right_answer"].'}';
+                        if($i < $row4[0] ) {$res .= ",";}
+                    }
+                    $res .= "]}";
+                    /*if ($row0 && $row) {
+                        $row0 = mysql_fetch_array($result0);
+                        while($row = mysql_fetch_array($result)){
+                            $i++;
+                            $res .= '{"text": "'.$row["text"].'", "opened": "'.$row["opened"].'", "answers": "'.$row["answers"].'", "right_answer": '.$row["right_answer"].'}';
+                            if($i < mysql_num_rows($result)) echo ",";
+                        }
+                        $res .= "]}";
+                    }
+                    else{
+                        $res = '{"title": "", "description": "", "cnt": 0, "answers":[{}]}';
+                    }*/
+                }
+
+            }
+            catch(PDOException $e) {
+                echo $e->getMessage();
+            }
+
+
+            /*$result = mysql_query("SET NAMES 'utf8'; ");
             $result = mysql_query("SELECT id FROM `results` WHERE login = '".$login."' AND test_id = ".$test_id."; ");
             if (!$result) {echo "ERROR!";}
             if(mysql_num_rows($result) > 0 ){
-                echo '{"title": "you are answered", "description": "", "cnt": 0, "answers": [{}] }';
+                $res = '{"title": "you are answered", "description": "", "cnt": 0, "answers": [{}] }';
             }
             else{
-                $result0 = mysql_query("SELECT * FROM `tests` WHERE id = ".$test_id.";  ");
 
-                $result = mysql_query("SELECT `id`, `test_id`, `text`, `opened`, `answers`, `right_answer` FROM `questions` WHERE test_id = ".$test_id."; ");
-
-                if ($result0 && $result) {
-                    $row0 = mysql_fetch_array($result0);
-                    $i = 0;
-                    echo '{"title": "'.$row0["title"].'", "description": "'.$row0["description"].'", "cnt": "'.mysql_num_rows($result).'", "questions":[';
-                    while($row = mysql_fetch_array($result)){
-                        $i++;
-                        echo '{"text": "'.$row["text"].'", "opened": "'.$row["opened"].'", "answers": "'.$row["answers"].'", "right_answer": '.$row["right_answer"].'}';
-                        if($i < mysql_num_rows($result)) echo ",";
-                    }
-                    echo "]}";
-                }
-                else{
-                    echo '{"title": "", "description": "", "cnt": 0, "answers":[{}]}';
-                }
-            }
+            }*/
+            return $res;
         }
     }
 

@@ -36,8 +36,7 @@ function Quetions() {
                 .success(function(response){
                      $("#q_blk_content").html(response);
                     $("#sh_newquestion").click(function(){
-                       // alert(345);
-                        $("#newQueText").val("");
+                         $("#newQueText").val("");
                         $("#var0").attr('checked', false);
                         $("#new_cb_toggle_blk").show();
                         $("#var1").val("");
@@ -144,7 +143,6 @@ function Quetions() {
             method: "post"
         })
             .success(function(response){
-                //alert(self.test_id);
                 self.getQuestionsList(self.cur_edit_que);
             })
             .fail(function(response){
@@ -152,10 +150,13 @@ function Quetions() {
             });
         return req;
     }
-    self.getQuestionForEditing = function(que_id){
+    self.getTestQuestions = function(test_id){
         var req = $.ajax({
-            url: "ajax.php?getQuestionForEditing",
-            data: {"que_id": que_id},
+            url: "ajax.php?getTestQuestions",
+            data: {
+                "test_id": test_id,
+                "login": userVM.login
+            },
             method: "get"
         })
             .success(function(response){

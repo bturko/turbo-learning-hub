@@ -24,7 +24,11 @@
     <div class="row vertical-center-row">
         <div class="col-lg-12">
             <div class="row ">
-                <h1><div class="circular">&nbsp;Contactis&nbsp;Learning&nbsp;Hub</div></h1>
+                <h1><div class="circular">&nbsp;<?php
+                        include 'vendor/autoload.php';
+                        use \TLH\Config\Config;
+                        $conf = New Config();
+                        echo $conf->company_name; ?>&nbsp;Learning&nbsp;Hub</div></h1>
 
                 <section id="set-8">
                     <div class="hi-icon-wrap hi-icon-effect-8">
@@ -57,7 +61,9 @@
 
 <div class="md-modal" id="modal-log-in">
     <div class="md-content">
-        <h3>Вход<br></h3><div class="log_in_err">Введите логин и пароль!</div>
+        <h3>Вход<br></h3>
+        <div class="log_in_err alert alert-warning" style="width: 80%;margin: 0px 10%; padding: 10px;"><span class="glyphicon glyphicon-exclamation-sign"></span>Введите логин и пароль!</div>
+        <!--<div class="log_in_err">Введите логин и пароль!</div>-->
         <div>
             <form class="form-horizontal"  >
                 <div class="form-group">
@@ -93,7 +99,9 @@
 
 <div class="md-modal" id="modal-reg-user">
     <div class="md-content">
-        <h3>Регистрация<br></h3><div class="register_err">Заполните все поля!</div>
+        <h3>Регистрация<br></h3>
+        <div class="alert alert-warning register_err" style="width: 80%;margin: 0px 10%; padding: 10px;"><span class="glyphicon glyphicon-exclamation-sign"></span>Заполните все поля!</div>
+        <!--<div class="register_err">Заполните все поля!</div>-->
         <div>
             <form class="form-horizontal" role="form" >
                 <div class="form-group">
@@ -118,12 +126,10 @@
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10 row">
                         <div class="col-xs-4">
-                            <!--<button id="btnRegister" type="submit" class="btn btn-primary">Регистрация</button>-->
                             <a id="btnRegister" href="#" class="btn btn-success"><span class="glyphicon glyphicon-saved"></span> Регистрация</a>
                         </div>
                         <div class="col-xs-4">
-                            <!--<button id="btnRegisterCancel" type="submit" class="btn btn-default" >Отмена</button>-->
-                            <a id="btnRegisterCancel" href="#" class="btn btn-warning"><span class="glyphicon glyphicon-user"></span> Отмена</a>
+                             <a id="btnRegisterCancel" href="#" class="btn btn-warning"><span class="glyphicon glyphicon-remove"></span> Отмена</a>
                         </div>
                     </div>
                 </div>
